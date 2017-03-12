@@ -1,0 +1,189 @@
+/* Imports */
+/* breakpoints */
+.clearfix {
+  float: none;
+  clear: both; }
+
+/* MOBILE FIRST! */
+.swiper-container {
+  width: 100vw;
+  height: 100vh; }
+
+.swiper-container .swiper-swiper-page-prev {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: #fff;
+  top: 0;
+  left: 0; }
+
+.swiper-container .headline {
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  z-index: 900;
+  color: white;
+  width: 600px; }
+
+.swiper-container .headline h2 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100;
+  font-size: 50px;
+  margin-top: 0; }
+
+.swiper-container .headline .description {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100;
+  font-size: 24px; }
+
+.swiper-container .swiper-wrapper .swiper-slide {
+  position: relative;
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+  background-size: cover;
+  /* Center slide text vertically */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center; }
+
+.swiper-container .swiper-wrapper .swiper-slide .green {
+  display: none;
+  position: absolute;
+  top: 100px;
+  right: 100px;
+  width: 100px;
+  height: 100px;
+  background-color: green; }
+
+.swiper-container .swiper-wrapper .swiper-slide .red {
+  display: none;
+  position: absolute;
+  top: 200px;
+  right: 300px;
+  width: 200px;
+  height: 200px;
+  background-color: red; }
+
+.swiper-container .swiper-wrapper .swiper-slide .callout-panel {
+  display: none;
+  text-align: left;
+  padding: 25px;
+  color: white;
+  position: absolute;
+  top: 25%;
+  right: 100px;
+  width: 500px;
+  background-color: rgba(0, 70, 127, 0.75);
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100; }
+
+.swiper-container .swiper-wrapper .swiper-slide .callout-panel h2 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 32;
+  margin-top: 0; }
+
+.swiper-container .swiper-pagination {
+  position: absolute;
+  width: 700px;
+  left: 100px;
+  top: 400px;
+  bottom: auto; }
+
+.swiper-container .swiper-pagination .pager {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100;
+  font-size: 24px;
+  margin: 0;
+  text-align: left;
+  position: absolute;
+  width: 500px;
+  display: none;
+  padding: 20px;
+  transition: top 5s ease, transform 5s ease, color 1s ease; }
+
+.swiper-container .swiper-pagination .pager span {
+  transition: opacity 5s ease, color 5s ease; }
+
+.swiper-container .swiper-pagination .pager.prev-2, .swiper-container .swiper-pagination .pager.prev-1, .swiper-container .swiper-pagination .pager.next-1, .swiper-container .swiper-pagination .pager.next-2 {
+  color: white;
+  display: block; }
+
+.swiper-container .swiper-pagination .pager.prev-2 {
+  transform: perspective(1000px) rotateX(45deg);
+  padding-left: 16px;
+  top: 0;
+  padding: 0 26px; }
+
+.swiper-container .swiper-pagination .pager.prev-2 span {
+  opacity: .25; }
+
+.swiper-container .swiper-pagination .pager.prev-1 {
+  transform: perspective(1000px) rotateX(20deg);
+  top: 36px;
+  padding: 5px 20px; }
+
+.swiper-container .swiper-pagination .pager.prev-1 span {
+  opacity: .5; }
+
+.swiper-container .swiper-pagination .pager.active {
+  top: 82px;
+  display: block;
+  transition: top 0s linear;
+  background-color: rgba(255, 255, 255, 0.75); }
+
+.swiper-container .swiper-pagination .pager.active span {
+  transition: color 0s linear; }
+
+.swiper-container .swiper-pagination .pager.active .swiper-page-prev {
+  position: absolute;
+  right: 25px;
+  top: 12px;
+  background: url(../img/up-chevron.png) no-repeat center center;
+  background-size: 24px 14px;
+  width: 24px;
+  height: 14px;
+  cursor: pointer;
+  z-index: 1000; }
+
+.swiper-container .swiper-pagination .pager.active .swiper-page-next {
+  position: absolute;
+  right: 25px;
+  bottom: 12px;
+  background: url(../img/down-chevron.png) no-repeat center center;
+  background-size: 24px 14px;
+  width: 24px;
+  height: 14px;
+  cursor: pointer;
+  z-index: 9999; }
+
+.swiper-container .swiper-pagination .pager.next-1 {
+  top: 158px;
+  transform: perspective(1000px) rotateX(-20deg);
+  padding: 5px 20px; }
+
+.swiper-container .swiper-pagination .pager.next-1 span {
+  opacity: .5; }
+
+.swiper-container .swiper-pagination .pager.next-2 {
+  margin-top: 0;
+  top: 204px;
+  padding-left: 16px;
+  transform: perspective(1000px) rotateX(-45deg);
+  padding: 0 26px; }
+
+.swiper-container .swiper-pagination .pager.next-2 span {
+  opacity: .25; }
+
+/* breakpoints */
+/* breakpoints */

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Demo</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<!-- <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet"> -->
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/swiper.min.css">
+	<link rel="stylesheet" href="assets/sass/main.css">
+	
+</head>
+<body>
+	
+	<div id="prev"></div>
+	<div id="next"></div>
+	
+	<div class="swiper-container">
+		<div class="headline">
+			<h2>Headline</h2>
+			<div class="description">
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea culpa hic tempore, cum reprehenderit.
+			</div>
+		</div>
+		
+		<div class="swiper-wrapper">
+			<div class="swiper-slide" data-name="Slide 1" style="background-image: url(assets/img/gpn-stock-1.jpg);">
+				<!-- <div class="green" data-swiper-parallax="-100"></div>
+				<div class="red" data-swiper-parallax="100"></div> -->
+				
+				<div class="callout-panel" data-swiper-parallax="400">
+					<h2>Omnichannel Payment Solutions</h2>
+					<p>Global solutions for your business payment needs. Global Payments is focused on delivering innovative payment technology solutions to help your business succeed and focus on what you do best.</p>
+				</div>
+			</div>
+			<div class="swiper-slide" data-name="Slide 2" style="background-image: url(assets/img/gpn-stock-1.jpg);">
+				<div class="green" data-swiper-parallax="-500"></div>
+				<div class="red" data-swiper-parallax="-1000"></div>
+			</div>
+			<div class="swiper-slide" style="background-image: url(assets/img/gpn-stock-1.jpg);"></div>
+			<div class="swiper-slide" style="background-image: url(assets/img/gpn-stock-1.jpg);"></div>
+			<div class="swiper-slide" style="background-image: url(assets/img/gpn-stock-1.jpg);"></div>
+			<div class="swiper-slide" style="background-image: url(assets/img/stock-blue.jpg);"></div>
+			<div class="swiper-slide" style="background-image: url(assets/img/stock7.jpg);"></div>
+			<div class="swiper-slide" style="background-image: url(assets/img/stock8.jpg);"></div>
+			<div class="swiper-slide" style="background-image: url(assets/img/stock9.jpg);"></div>
+			<div class="swiper-slide" style="background-image: url(assets/img/stock10.jpg);"></div>
+			<div class="swiper-slide" style="background-image: url(assets/img/stock10.jpg);"></div>
+			<div class="swiper-slide" style="background-image: url(assets/img/stock10.jpg);"></div>
+			<div class="swiper-slide" style="background-image: url(assets/img/stock10.jpg);"></div>
+		</div>
+		<div class="test-prev">prev</div>
+		<div class="test-next">next</div>
+		<div class="swiper-pagination">
+			<div class="pager active"><span>Retail</span></div>
+			<div class="pager"><span>Slide 2</span></div>
+			<div class="pager"><span>Slide 3</span></div>
+			<div class="pager"><span>Slide 4</span></div>
+			<div class="pager"><span>Slide 5</span></div>
+			<div class="pager"><span>Slide 6</span></div>
+			<div class="pager"><span>Slide 7</span></div>
+			<div class="pager"><span>Slide 8</span></div>
+			<div class="pager"><span>Slide 9</span></div>
+			<div class="pager"><span>Slide 10</span></div>
+			<div class="pager"><span>Slide 11</span></div>
+			<div class="pager"><span>Slide 12</span></div>
+			<div class="pager"><span>Slide 13</span></div>
+		</div>
+	</div>
+	
+	<script src="assets/js/jquery-2.2.3.min.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
+	<script src="assets/js/swiper.min.js"></script>
+	<script type="text/javascript" src="assets/js/main.js"></script>
+	
+	<script>
+		var swiper = new Swiper('.swiper-container', {
+			pagination: '.swiper-pagination',
+			paginationClickable: true,
+			//speed: 2000,
+			direction: 'vertical',
+			mousewheelControl: true,
+			paginationType: 'custom',
+			//virtualTranslate: true, // breaks when loop set to true?
+			effect: 'fade',
+			parallax: true,
+			preventClicks: false,
+			preventClicksPropagation: false,
+			loop: true,
+			
+			paginationCustomRender: function(swiper, current, total) {
+				
+				var pageControls = "<div class='swiper-page-prev'></div><div class='swiper-page-next'></div>";
+				var $allPagers = $('.swiper-pagination .pager');
+				var $currentPager;
+				
+				$(".swiper-wrapper .swiper-slide").each(function(i) {
+					var currentClass = "";
+					
+					$currentPager = $('.swiper-pagination .pager').eq(current-1);
+					
+					$allPagers.removeClass('active prev-1 prev-2 next-1 next-2');
+					// using .eq() takes care of edge case to make prev-1 and 2 loop around when active pager is either index 0 or 1
+					$('.swiper-pagination .pager').eq(current-3).addClass('prev-2');
+					$('.swiper-pagination .pager').eq(current-2).addClass('prev-1');
+					$currentPager.addClass('active');
+					$('.swiper-pagination .pager').eq(current).addClass('next-1');
+					$('.swiper-pagination .pager').eq(current+1).addClass('next-2');
+					
+					// edge case if next-1 and has to loop around to the other side
+					if (current == total-1) { // second to last
+						$('.swiper-pagination .pager').eq(total - (current+1)).addClass('next-2');
+					}
+					else if (current == total) { // last
+						$('.swiper-pagination .pager').eq(total - current).addClass('next-1');
+						$('.swiper-pagination .pager').eq(total - (current-1)).addClass('next-2');
+					}					
+				});
+				// TODO Change to keep element objects persistent instead of removing and adding new ones, causing event attachment issues
+				$allPagers.find('.swiper-page-prev, .swiper-page-next').remove();
+				
+				$currentPager.append(pageControls);
+				
+				
+
+			}
+		});
+		
+		$('.swiper-pagination').on('click', '.swiper-page-prev, .prev-1', function(){
+			swiper.slidePrev();
+		});
+		$('.swiper-pagination').on('click', '.swiper-page-next, .next-1', function(){
+			//$('.swiper-pagination .pager').removeAttr('style');
+			//$('.swiper-pagination .next-2').css('margin-top', '0');
+			swiper.slideNext();
+		});
+	</script>
+</body>
+</html>

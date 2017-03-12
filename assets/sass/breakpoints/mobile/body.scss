@@ -1,0 +1,196 @@
+.swiper-container {
+	width: 100vw;
+	height: 100vh;
+	
+	.swiper-swiper-page-prev {
+		position: absolute;
+		width: 100px;
+		height: 100px;
+		background-color: #fff;
+		top: 0;
+		left: 0;
+	}
+	
+	.headline {
+		position: absolute;
+		left: 100px;
+		top: 100px;
+		z-index: 900;
+		color: white;
+		width: 600px;
+				
+		h2 {
+			font-family: 'Roboto', sans-serif;
+			font-weight: 100;
+			font-size: 50px;
+			margin-top: 0;
+		}
+		.description {
+			font-family: 'Roboto', sans-serif;
+			font-weight: 100;
+			font-size: 24px;
+		}
+	}
+	.swiper-wrapper {
+		.swiper-slide {
+			position: relative;
+			text-align: center;
+			font-size: 18px;
+			background: #fff;
+			background-size: cover;
+
+			/* Center slide text vertically */
+			display: -webkit-box;
+			display: -ms-flexbox;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-box-pack: center;
+			-ms-flex-pack: center;
+			-webkit-justify-content: center;
+			justify-content: center;
+			-webkit-box-align: center;
+			-ms-flex-align: center;
+			-webkit-align-items: center;
+			align-items: center;
+			//overflow: hidden;
+			.green {
+				display: none;
+				position: absolute;
+				top: 100px;
+				right: 100px;
+				width: 100px;
+				height: 100px;
+				background-color: green;
+			}
+			.red {
+				display: none;
+				position: absolute;
+				top: 200px;
+				right: 300px;
+				width: 200px;
+				height: 200px;
+				background-color: red;
+			}
+			.callout-panel {
+				display: none;
+				text-align: left;
+				padding: 25px;
+				color: white;
+				position: absolute;
+				top: 25%;
+				right: 100px;
+				width: 500px;
+				background-color: rgba(0, 70, 127, 0.75);
+				font-family: 'Roboto', sans-serif;
+				font-weight: 100;
+				h2 {
+					font-family: 'Roboto', sans-serif;
+					font-weight: 300;
+					font-size: 32;
+					margin-top: 0;
+				}
+			}
+		}
+	}
+	.swiper-pagination {
+		position: absolute;
+		width: 700px;
+		left: 100px;
+		top: 400px;
+		bottom: auto;
+		.pager {
+			$transition-speed: 5s;
+			font-family: 'Roboto', sans-serif;
+			font-weight: 100;
+			font-size: 24px;
+			margin: 0;
+			text-align: left;
+			position: absolute;
+			width: 500px;
+			display: none;
+			//border: 1px solid black;
+			padding: 20px;
+			
+			span {
+				transition: opacity 5s ease, color 5s ease;
+			}
+			transition: top $transition-speed ease, transform $transition-speed ease, color 1s ease;
+			
+			&.prev-2, &.prev-1, &.next-1, &.next-2 {
+				color: white;
+				display: block;
+			}
+			&.prev-2 {
+				transform: perspective( 1000px ) rotateX( 45deg );
+				padding-left: 16px;
+				top: 0;
+				span {
+					opacity: .25;
+				}
+				
+				padding: 0 26px;
+			}
+			&.prev-1 {
+				transform: perspective( 1000px ) rotateX( 20deg );
+				top: 36px;
+				span {
+					opacity: .5;
+				}
+				
+				padding: 5px 20px;
+			}
+			&.active {
+				top: 82px;
+				display: block;
+				transition: top 0s linear;
+				
+				background-color: rgba(255, 255, 255, .75);
+				
+				span {
+					transition: color 0s linear;
+				}
+				.swiper-page-prev {
+					position: absolute;
+					right: 25px;
+					top: 12px;
+					background: url(../img/up-chevron.png) no-repeat center center;
+					background-size: 24px 14px;
+					width: 24px;
+					height: 14px;
+					cursor: pointer;
+					z-index: 1000;
+				}
+				.swiper-page-next {
+					position: absolute;
+					right: 25px;
+					bottom: 12px;
+					background: url(../img/down-chevron.png) no-repeat center center;
+					background-size: 24px 14px;
+					width: 24px;
+					height: 14px;
+					cursor: pointer;
+					z-index: 9999;
+				}
+			}
+			&.next-1 {
+				top: 158px;
+				transform: perspective( 1000px ) rotateX( -20deg );
+				span {
+					opacity: .5;
+				}
+				padding: 5px 20px;
+			}
+			&.next-2 {
+				margin-top: 0;
+				top: 204px;
+				padding-left: 16px;
+				transform: perspective( 1000px ) rotateX( -45deg );
+				padding: 0 26px;
+				
+				span {
+					opacity: .25;
+				}
+			}
+		}
+	}
+}

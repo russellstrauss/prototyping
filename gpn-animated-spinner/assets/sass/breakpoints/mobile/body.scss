@@ -39,20 +39,6 @@
 			background: #fff;
 			background-size: cover;
 
-			/* Center slide text vertically */
-			display: -webkit-box;
-			display: -ms-flexbox;
-			display: -webkit-flex;
-			display: flex;
-			-webkit-box-pack: center;
-			-ms-flex-pack: center;
-			-webkit-justify-content: center;
-			justify-content: center;
-			-webkit-box-align: center;
-			-ms-flex-align: center;
-			-webkit-align-items: center;
-			align-items: center;
-			//overflow: hidden;
 			.green {
 				display: none;
 				position: absolute;
@@ -99,98 +85,97 @@
 		top: 400px;
 		bottom: auto;
 		.pager {
-			$transition-speed: 5s;
+			$transition-speed: .5s;
 			font-family: 'Roboto', sans-serif;
-			font-weight: 100;
+			font-weight: 400;
 			font-size: 24px;
 			margin: 0;
 			text-align: left;
 			position: absolute;
 			width: 500px;
 			display: none;
-			//border: 1px solid black;
 			padding: 20px;
+			transition: top $transition-speed ease, opacity $transition-speed ease, padding $transition-speed ease, color $transition-speed ease;
 			
-			span {
-				transition: opacity 5s ease, color 5s ease;
-			}
-			transition: top $transition-speed ease, transform $transition-speed ease, color 1s ease;
-			
-			&.prev-2, &.prev-1, &.next-1, &.next-2 {
+			&.prev-2, &.prev, &.next, &.next-2, &.next-3, &.prev-3 {
 				color: white;
 				display: block;
 			}
-			&.prev-2 {
-				transform: perspective( 1000px ) rotateX( 45deg );
-				padding-left: 16px;
-				top: 0;
-				span {
-					opacity: .25;
-				}
-				
-				padding: 0 26px;
-			}
-			&.prev-1 {
-				transform: perspective( 1000px ) rotateX( 20deg );
-				top: 36px;
-				span {
-					opacity: .5;
-				}
-				
-				padding: 5px 20px;
-			}
+			
 			&.active {
 				top: 82px;
 				display: block;
-				transition: top 0s linear;
-				
-				background-color: rgba(255, 255, 255, .75);
-				
-				span {
-					transition: color 0s linear;
-				}
-				.swiper-page-prev {
-					position: absolute;
-					right: 25px;
-					top: 12px;
-					background: url(../img/up-chevron.png) no-repeat center center;
-					background-size: 24px 14px;
-					width: 24px;
-					height: 14px;
-					cursor: pointer;
-					z-index: 1000;
-				}
-				.swiper-page-next {
-					position: absolute;
-					right: 25px;
-					bottom: 12px;
-					background: url(../img/down-chevron.png) no-repeat center center;
-					background-size: 24px 14px;
-					width: 24px;
-					height: 14px;
-					cursor: pointer;
-					z-index: 9999;
-				}
 			}
-			&.next-1 {
-				top: 158px;
-				transform: perspective( 1000px ) rotateX( -20deg );
-				span {
-					opacity: .5;
-				}
+			&.prev {
+				top: 36px;
+				opacity: .25;
 				padding: 5px 20px;
+				cursor: pointer;
+			}
+			&.next {
+				top: 158px;
+				opacity: .25;
+				padding: 5px 20px;
+				cursor: pointer;
+			}
+			&.prev-2 {
+				top: 0;
+				opacity: .15;
+				padding: 0 30px;
+				
 			}
 			&.next-2 {
 				margin-top: 0;
 				top: 204px;
-				padding-left: 16px;
-				transform: perspective( 1000px ) rotateX( -45deg );
-				padding: 0 26px;
-				
-				span {
-					opacity: .25;
-				}
+				padding: 0 30px;
+				opacity: .15;
 			}
+			&.prev-3 {
+				top: -30px;
+				padding: 0 50px;
+				opacity: 0;
+			}
+			&.next-3 {
+				top: 236px;
+				padding: 0 50px;
+				opacity: 0;
+			}
+		}
+	}
+	.spinner-ui {
+		position: absolute;
+		width: 400px;
+		height: 75px;
+		left: 100px;
+		top: 480px;
+		.background-color {
+			background-color: rgba(255, 255, 255, .75);
+			position: relative;
+			height: 100%;
+			width: 100%;
+			z-index: 1;
+		}
+		.swiper-page-prev {
+			position: absolute;
+			right: 25px;
+			top: 12px;
+			background: url(../img/up-chevron.png) no-repeat center center;
+			background-size: 24px 14px;
+			width: 24px;
+			height: 14px;
+			cursor: pointer;
+			z-index: 9999;
+		}
+		.swiper-page-next {
+			position: absolute;
+			right: 25px;
+			bottom: 12px;
+			background: url(../img/down-chevron.png) no-repeat center center;
+			background-size: 24px 14px;
+			width: 24px;
+			height: 14px;
+			cursor: pointer;
+			z-index: 9999;
 		}
 	}
 }

@@ -53,7 +53,10 @@
 		<div class="test-prev">prev</div>
 		<div class="test-next">next</div>
 		<div class="swiper-pagination">
-			<div class="pager active"><span>Retail</span></div>
+			<div class="pager active">
+				<span>Retail</span>
+				<div class="swiper-page-prev"></div><div class="swiper-page-next"></div>
+			</div>
 			<div class="pager"><span>Slide 2</span></div>
 			<div class="pager"><span>Slide 3</span></div>
 			<div class="pager"><span>Slide 4</span></div>
@@ -88,10 +91,12 @@
 			preventClicks: false,
 			preventClicksPropagation: false,
 			loop: true,
+			prevButton: '.swiper-page-prev',
+			nextButton: '.swiper-page-next',
 			
 			paginationCustomRender: function(swiper, current, total) {
 				
-				var pageControls = "<div class='swiper-page-prev'></div><div class='swiper-page-next'></div>";
+				//var pageControls = "<div class='swiper-page-prev'></div><div class='swiper-page-next'></div>";
 				var $allPagers = $('.swiper-pagination .pager');
 				var $currentPager;
 				
@@ -118,21 +123,19 @@
 					}					
 				});
 				// TODO Change to keep element objects persistent instead of removing and adding new ones, causing event attachment issues
-				$allPagers.find('.swiper-page-prev, .swiper-page-next').remove();
+				var $pageControls = $allPagers.find('.swiper-page-prev, .swiper-page-next');
 				
-				$currentPager.append(pageControls);
+				$currentPager.append($pageControls);
 				
 				
 
 			}
 		});
 		
-		$('.swiper-pagination').on('click', '.swiper-page-prev, .prev-1', function(){
+		$('.swiper-pagination').on('click', '.prev-1', function(){
 			swiper.slidePrev();
 		});
-		$('.swiper-pagination').on('click', '.swiper-page-next, .next-1', function(){
-			//$('.swiper-pagination .pager').removeAttr('style');
-			//$('.swiper-pagination .next-2').css('margin-top', '0');
+		$('.swiper-pagination').on('click', '.next-1', function(){
 			swiper.slideNext();
 		});
 	</script>

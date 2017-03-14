@@ -19,15 +19,15 @@
 	var swiper = new Swiper('.swiper-container', {
 		pagination: '.swiper-pagination',
 		paginationClickable: true,
-		//speed: 2000,
+		//speed: 500,
 		direction: 'vertical',
 		mousewheelControl: true,
 		paginationType: 'custom',
 		//virtualTranslate: true, // breaks when loop set to true?
 		effect: 'fade',
 		parallax: true,
-		preventClicks: false,
-		preventClicksPropagation: false,
+		//preventClicks: false,
+		//preventClicksPropagation: false,
 		loop: true,
 		prevButton: '.swiper-page-prev',
 		nextButton: '.swiper-page-next',

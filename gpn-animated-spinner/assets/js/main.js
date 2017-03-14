@@ -1,6 +1,37 @@
 (function(){
 	
-	
+	window.onload = function()
+	{
+		// Triggering page load animations
+		setTimeout(function(){
+			$('.headline h2').css({'margin-left': 0, 'opacity': 1});
+		}, 500);
+		setTimeout(function(){
+			$('.spinner-background').css({'opacity': 1});
+		}, 750);
+		setTimeout(function(){
+			$('.headline .description').css({'opacity': 1});
+		}, 900);
+		
+		var pagerFadeInInterval = 300;
+		$('.spinner-pagination').addClass('page-load-animation');
+		$('.spinner-pagination .pager').each(function(i){
+			var $pager = $(this);
+			var opacities = [1, .5, .25, .15]; // match to values set in CSS for .active, .next, .next-2, .next-3, or else just set the rest to 0.
+			setTimeout(function(){
+				try {
+					$pager.css({'opacity': opacities[i]});
+				}
+				catch(error) {
+					$pager.css({'opacity': 0});
+				}
+			}, 2000 + (pagerFadeInInterval*i)); // trigger animation of each page in 500 ms increments
+		});
+		setTimeout(function(){ // After all pagers have been animated in, remove page-load-animation class. This class allows us to distinguish the page load transitions from the actual UI transitions without conflict.
+			$('.spinner-pagination').removeClass('page-load-animation');
+		}, $('.spinner-pagination .pager').length * pagerFadeInInterval);
+		
+	}
 	
 	
 	var getNextSibling = function(jQueryObject) {
@@ -17,39 +48,58 @@
 	}
 	
 	var swiper = new Swiper('.swiper-container', {
-		pagination: '.swiper-pagination',
-		paginationClickable: true,
+		//preventClicks: false,
+		//preventClicksPropagation: false,
 		//speed: 500,
+		//virtualTranslate: true, // breaks when loop set to true?
+		pagination: '.spinner-pagination',
+		paginationClickable: true,
 		direction: 'vertical',
 		mousewheelControl: true,
 		paginationType: 'custom',
-		//virtualTranslate: true, // breaks when loop set to true?
 		effect: 'fade',
 		parallax: true,
-		//preventClicks: false,
-		//preventClicksPropagation: false,
+		setWrapperSize: true,
 		loop: true,
 		prevButton: '.swiper-page-prev',
 		nextButton: '.swiper-page-next',
 		
 		paginationCustomRender: function(swiper, current, total) {
-			var $pagination = $('.swiper-pagination');
+			var $pagination = $('.spinner-pagination');
 			var $allPagers = $pagination.find('.pager');
-			var $activePager = $('.swiper-pagination .pager').eq(current-1);
+			var $activePager = $('.spinner-pagination .pager').eq(current-1);
 			
-			// Set active class and add classes to three elements before and after active element
-			$allPagers.removeClass('active prev prev-2 prev-3 next next-2 next-3');
-			$activePager.addClass('active');
-			var $next = getNextSibling($activePager).addClass('next');
-			var $next2 = getNextSibling($next).addClass('next-2');
-			var $next3 = getNextSibling($next2).addClass('next-3');
-			var $prev = getPrevSibling($activePager).addClass('prev');
-			var $prev2 = getPrevSibling($prev).addClass('prev-2');
-			var $prev3 = getPrevSibling($prev2).addClass('prev-3');
+			var currentTop = 0;
+			
+			if (total > 5) {
+				//debugger;
+				$allPagers.removeClass('active prev next next-2 next-3');
+				$allPagers.removeAttr('style');
+				$activePager.addClass('active');
+				$('.spinner-background').height($activePager.outerHeight());
+				currentTop += $activePager.outerHeight();
+				var $prev = getPrevSibling($activePager).addClass('prev');
+				$prev.css('top', -1 * ($prev.outerHeight()));
+				var $next = getNextSibling($activePager).addClass('next');
+				$next.css('top', currentTop);
+				currentTop += $next.outerHeight();
+				var $next2 = getNextSibling($next).addClass('next-2');
+				$next2.css('top', currentTop);
+				currentTop += $next2.outerHeight();
+				var $next3 = getNextSibling($next2).addClass('next-3');
+				$next3.css('top', currentTop);
+				currentTop += $next3.outerHeight();
+				
+				
+			}
 			
 			// Move page controls to active pager
 			var $pageControls = $allPagers.find('.swiper-page-prev, .swiper-page-next');
 			$activePager.append($pageControls);
+			
+			// move $prev to bottom of the list (visually speaking) in order to have it fade in from the bottom correctly
+			//$prev.hide();
+			//$prev.css('top', currentTop);
 		}
 	});
 	

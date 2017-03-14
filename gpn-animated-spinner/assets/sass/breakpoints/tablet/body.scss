@@ -1,0 +1,72 @@
+.animated-spinner-hero {
+	
+	.swiper-wrapper {
+		.swiper-slide {
+			
+			.headline {
+				margin-top: 30vh;
+				color: white;
+						
+				h2 {
+					@include OpenSansExtraBold;
+					font-size: 36px;
+					margin-top: 0;
+				}
+				.description {
+					@include OpenSansLight;
+					font-size: 18px;
+					line-height: 1.4;
+				}
+			}
+		}
+	}
+	.spinner-container {
+		top: 60vh;
+		width: 50vw;
+		height: auto;
+		min-width: 700px;
+		.spinner-pagination {
+			
+			.pager {
+				font-size: 20px;
+				&.prev {
+					
+				}
+				
+				&.active {
+					padding: 40px 75px;
+					
+					.pager-cta {
+							
+					}
+				}
+				&.next {
+					
+				}
+				&.next-2 {
+					
+				}
+				&.next-3 {
+					
+				}
+			}
+		}
+		.spinner-background {
+			.swiper-page-prev, .swiper-page-next {
+				width: 75px;
+				background-size: 15px 9px;
+				opacity: .5;
+				transition: opacity .5s ease;
+				&:hover {
+					opacity: 1;
+				}
+			}
+			.swiper-page-prev {
+				background-position: center bottom 15px;
+			}
+			.swiper-page-next {
+				background-position: center top 15px;
+			}
+		}
+	}
+}

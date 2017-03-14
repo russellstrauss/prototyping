@@ -1,178 +1,136 @@
-.swiper-container {
+@mixin OpenSansLight {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 100;
+}
+@mixin OpenSansSemiBold {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 600;
+}
+@mixin OpenSansExtraBold {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 800;
+}
+
+
+$base-z-index: 10;
+$base-mobile-padding: 15px;
+$transition-speed: 5s;
+
+.animated-spinner-hero {
 	width: 100vw;
 	height: 100vh;
 	
-	.headline {
-		position: absolute;
-		left: 100px;
-		top: 100px;
-		z-index: 900;
-		color: white;
-		width: 600px;
-				
-		h2 {
-			font-family: 'Roboto', sans-serif;
-			font-weight: 100;
-			font-size: 50px;
-			margin-top: 0;
-		}
-		.description {
-			font-family: 'Roboto', sans-serif;
-			font-weight: 100;
-			font-size: 24px;
-		}
-	}
 	.swiper-wrapper {
 		.swiper-slide {
-			position: relative;
-			text-align: center;
-			font-size: 18px;
-			background: #fff;
+			background-position: center center;
 			background-size: cover;
-
-			.green {
-				display: none;
-				position: absolute;
-				top: 100px;
-				right: 100px;
-				width: 100px;
-				height: 100px;
-				background-color: green;
-			}
-			.red {
-				display: none;
-				position: absolute;
-				top: 200px;
-				right: 300px;
-				width: 200px;
-				height: 200px;
-				background-color: red;
-			}
-			.callout-panel {
-				display: none;
-				text-align: left;
-				padding: 25px;
+			padding-left: 15px;
+			padding-right: 15px;
+			
+			.headline {
 				color: white;
-				position: absolute;
-				top: 25%;
-				right: 100px;
-				width: 500px;
-				background-color: rgba(0, 70, 127, 0.75);
-				font-family: 'Roboto', sans-serif;
-				font-weight: 100;
+						
 				h2 {
-					font-family: 'Roboto', sans-serif;
-					font-weight: 300;
-					font-size: 32;
+					@include OpenSansExtraBold;
+					font-size: 10vw;
 					margin-top: 0;
+					margin-left: -30px;
+					opacity: 0;
+					transition: opacity 1s ease, margin-left 1s ease; // page load animation
+				}
+				.description {
+					@include OpenSansLight;
+					font-size: 6vw;
+					line-height: 1.4;
+					opacity: 0;
+					transition: opacity 1s ease;  // page load animation
 				}
 			}
 		}
 	}
-	.spinner {
+	.spinner-container {
 		position: absolute;
-		width: 400px;
-		height: 312px;
-		left: 100px;
-		top: 400px;
-		z-index: 10; // matched from idangerous slider pagination
+		height: 220px;
+		bottom: 0;
+		z-index: $base-z-index;
+		padding-right: $base-mobile-padding;
+		.spinner-pagination {
 			
-		.swiper-pagination {
-			left: auto;
-			bottom: auto;
+			&.page-load-animation {
+				.pager {
+					transition: opacity 1s ease;
+				}
+			}
 			
 			.pager {
-				$transition-speed: .3s;
-				font-family: 'Roboto', sans-serif;
-				font-weight: 400;
-				font-size: 24px;
-				margin: 0;
-				text-align: left;
 				position: absolute;
-				width: 500px;
-				display: none;
-				padding: 20px;
-				transition: top $transition-speed ease, opacity $transition-speed ease, padding $transition-speed ease, color $transition-speed ease;
+				@include OpenSansSemiBold;
+				font-size: 14px;
+				color: white;
+				margin: 0;
+				width: 100%;
+				text-align: left;
+				padding: 5px 0 5px 75px;
+				opacity: 0;
+				//transition: top $transition-speed ease, opacity $transition-speed ease;
 				
-				&.prev-2, &.prev, &.next, &.next-2, &.next-3, &.prev-3 {
-					color: white;
-					display: block;
+				&.prev {
+					opacity: 0;
 				}
 				
 				&.active {
-					top: 111px;
-					display: block;
-				}
-				&.prev {
-					top: 66px;
-					opacity: .25;
-					padding: 5px 20px;
-					cursor: pointer;
+					top: 0;
+					//opacity: 1;
+					padding: 20px 45px 20px 45px;
+					
+					.pager-cta {
+						position: absolute;
+						height: 100%;
+						width: 40px;
+						top: 0;
+						right: 0;
+						//transform: translateY(-50%);
+						background: url(../img/pager-cta.png) no-repeat center right 10px;
+						background-size: 30px;
+						a {
+							
+						}	
+					}
 				}
 				&.next {
-					top: 185px;
-					opacity: .25;
-					padding: 5px 20px;
-					cursor: pointer;
-				}
-				&.prev-2 {
-					top: 30px;
-					opacity: .15;
-					padding: 0 30px;
-					
+					//opacity: .5;
 				}
 				&.next-2 {
-					margin-top: 0;
-					top: 230px;
-					padding: 0 30px;
-					opacity: .15;
-				}
-				&.prev-3 {
-					top: 0;
-					padding: 0 50px;
-					opacity: 0;
+					//opacity: .25;
 				}
 				&.next-3 {
-					top: 276px;
-					padding: 0 50px;
-					opacity: 0;
+					//opacity: .15;
 				}
 			}
 		}
-		.spinner-ui {
-			position: absolute;
-			width: 100%;
-			height: 75px;
-			left: 0;
-			top: 111px;
-			.background-color {
-				background-color: rgba(255, 255, 255, .75);
-				position: relative;
-				height: 100%;
-				width: 100%;
-				z-index: 1;
+		.spinner-background {
+			position: relative;
+			background-color: rgba(255, 255, 255, .3);
+			opacity: 0;
+			transition: height $transition-speed ease, opacity 1s ease; // height is spinner animation opacity is pageload animation
+			.swiper-page-prev, .swiper-page-next {
+				position: absolute;
+				left: 0;
+				width: 40px;
+				height: 50%;
+				cursor: pointer;
+				background-size: 20px 12px;
+				background-repeat: no-repeat;
+				background-position: center center;
+				opacity: .75;
 			}
 			.swiper-page-prev {
-				position: absolute;
-				right: 25px;
-				top: 12px;
-				background: url(../img/up-chevron.png) no-repeat center center;
-				background-size: 24px 14px;
-				width: 24px;
-				height: 14px;
-				cursor: pointer;
-				z-index: 9999;
+				top: 0;
+				background-image: url(../img/up-chevron.png);
 			}
 			.swiper-page-next {
-				position: absolute;
-				right: 25px;
-				bottom: 12px;
-				background: url(../img/down-chevron.png) no-repeat center center;
-				background-size: 24px 14px;
-				width: 24px;
-				height: 14px;
-				cursor: pointer;
-				z-index: 9999;
+				bottom: 0;
+				background-image: url(../img/down-chevron.png);
 			}
 		}
 	}

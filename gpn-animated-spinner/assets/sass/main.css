@@ -5,6 +5,41 @@
   clear: both; }
 
 /* MOBILE FIRST! */
+#test-prev {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100px;
+  width: 100px;
+  background-color: #fff;
+  z-index: 9999;
+  cursor: pointer; }
+
+#test-next {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100px;
+  width: 100px;
+  background-color: #fff;
+  z-index: 9999;
+  cursor: pointer; }
+
+#box {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  background-color: red;
+  top: 100px;
+  left: 100px;
+  transition: left 2s ease; }
+
+.no-transition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important; }
+
 .animated-spinner-hero {
   width: 100vw;
   height: 100vh; }
@@ -22,18 +57,13 @@
   font-family: 'Open Sans', sans-serif;
   font-weight: 800;
   font-size: 10vw;
-  margin-top: 0;
-  margin-left: -30px;
-  opacity: 0;
-  transition: opacity 1s ease, margin-left 1s ease; }
+  margin-top: 0; }
 
 .animated-spinner-hero .swiper-wrapper .swiper-slide .headline .description {
   font-family: 'Open Sans', sans-serif;
   font-weight: 100;
   font-size: 6vw;
-  line-height: 1.4;
-  opacity: 0;
-  transition: opacity 1s ease; }
+  line-height: 1.4; }
 
 .animated-spinner-hero .spinner-container {
   position: absolute;
@@ -55,14 +85,22 @@
   width: 100%;
   text-align: left;
   padding: 5px 0 5px 75px;
-  opacity: 0; }
+  opacity: 0;
+  transition: top 5s ease, opacity 5s ease; }
+
+.animated-spinner-hero .spinner-container .spinner-pagination .pager.prev, .animated-spinner-hero .spinner-container .spinner-pagination .pager.active, .animated-spinner-hero .spinner-container .spinner-pagination .pager.next, .animated-spinner-hero .spinner-container .spinner-pagination .pager.next-2, .animated-spinner-hero .spinner-container .spinner-pagination .pager.next-3 {
+  display: block; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.prev {
-  opacity: 0; }
+  transition: none;
+  opacity: 1;
+  color: tomato; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
   top: 0;
-  padding: 20px 45px 20px 45px; }
+  opacity: 1;
+  padding-left: 45px;
+  padding-right: 45px; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.active .pager-cta {
   position: absolute;
@@ -73,10 +111,12 @@
   background: url(../img/pager-cta.png) no-repeat center right 10px;
   background-size: 30px; }
 
+.animated-spinner-hero .spinner-container .spinner-pagination .pager.queued {
+  opacity: 0; }
+
 .animated-spinner-hero .spinner-container .spinner-background {
   position: relative;
   background-color: rgba(255, 255, 255, 0.3);
-  opacity: 0;
   transition: height 5s ease, opacity 1s ease; }
 
 .animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-page-next {
@@ -121,7 +161,7 @@
   .animated-spinner-hero .spinner-container .spinner-pagination .pager {
     font-size: 20px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
-    padding: 40px 75px; }
+    padding-left: 75px; }
   .animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-page-next {
     width: 75px;
     background-size: 15px 9px;

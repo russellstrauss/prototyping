@@ -1,3 +1,35 @@
+#test-prev {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100px;
+	width: 100px;
+	background-color: #fff;
+	z-index: 9999;
+	cursor: pointer;
+}
+#test-next {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 100px;
+	width: 100px;
+	background-color: #fff;
+	z-index: 9999;
+	cursor: pointer;
+}
+
+#box {
+	position: absolute;
+	height: 100px;
+	width: 100px;
+	background-color: red;
+	top: 100px;
+	left: 100px;
+	transition: left 2s ease;
+}
+
+
 @mixin OpenSansLight {
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 100;
@@ -11,6 +43,13 @@
 	font-weight: 800;
 }
 
+
+.no-transition {
+	-webkit-transition: none !important;
+	-moz-transition: none !important;
+	-o-transition: none !important;
+	transition: none !important;
+}
 
 $base-z-index: 10;
 $base-mobile-padding: 15px;
@@ -34,16 +73,20 @@ $transition-speed: 5s;
 					@include OpenSansExtraBold;
 					font-size: 10vw;
 					margin-top: 0;
-					margin-left: -30px;
-					opacity: 0;
-					transition: opacity 1s ease, margin-left 1s ease; // page load animation
+					// page load {
+						//margin-left: -30px; // page load
+						//opacity: 0; // page load
+						//transition: opacity 1s ease, margin-left 1s ease;
+					//}
 				}
 				.description {
 					@include OpenSansLight;
 					font-size: 6vw;
 					line-height: 1.4;
-					opacity: 0;
-					transition: opacity 1s ease;  // page load animation
+					// page load {
+						//opacity: 0;
+						//transition: opacity 1s ease;
+					//}
 				}
 			}
 		}
@@ -72,16 +115,29 @@ $transition-speed: 5s;
 				text-align: left;
 				padding: 5px 0 5px 75px;
 				opacity: 0;
-				//transition: top $transition-speed ease, opacity $transition-speed ease;
+				//display: none;
+				
+				// page load {
+					//opacity: 0;
+				//}
+				transition: top $transition-speed ease, opacity $transition-speed ease;
+				
+				&.prev, &.active, &.next, &.next-2, &.next-3 {
+					display: block;
+				}
 				
 				&.prev {
-					opacity: 0;
+					transition: none;
+					opacity: 1;
+					color: tomato;
 				}
 				
 				&.active {
 					top: 0;
-					//opacity: 1;
-					padding: 20px 45px 20px 45px;
+					opacity: 1;
+					//padding: 20px 45px 20px 45px;
+					padding-left: 45px;
+					padding-right: 45px;
 					
 					.pager-cta {
 						position: absolute;
@@ -97,22 +153,19 @@ $transition-speed: 5s;
 						}	
 					}
 				}
-				&.next {
-					//opacity: .5;
-				}
-				&.next-2 {
-					//opacity: .25;
-				}
-				&.next-3 {
-					//opacity: .15;
+				&.queued {
+					opacity: 0;
 				}
 			}
 		}
 		.spinner-background {
 			position: relative;
 			background-color: rgba(255, 255, 255, .3);
-			opacity: 0;
 			transition: height $transition-speed ease, opacity 1s ease; // height is spinner animation opacity is pageload animation
+			// page load {
+				//transition: height $transition-speed ease, opacity 1s ease;
+				//opacity: 0;	
+			//}
 			.swiper-page-prev, .swiper-page-next {
 				position: absolute;
 				left: 0;

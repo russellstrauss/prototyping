@@ -123,9 +123,13 @@ var activePagers = [];
 
 					$.each(pagers, function(i){
 						
+						// ideas for tomorrow
+						// show .visible classes (hide the rest) then use activePagers to calculate the visibles' positioning
+						// create clones to swoop in from above or below, then place the original in its place, show it, then delete the clones
+						
 						var wrapAroundIndex = -(total - (currentIndex + numberOfPagersShowing));
 						var hasWrapAround = currentIndex + numberOfPagersShowing > total;
-						if (i >= currentIndex && i < (currentIndex + numberOfPagersShowing) || (hasWrapAround && (i < wrapAroundIndex))) { // if currently showing range has to wrap around from the end back to the beginning
+						if (i >= currentIndex && i < (currentIndex + numberOfPagersShowing) || (hasWrapAround && (i < wrapAroundIndex))) { // if visible range has to wrap around from the end back to the beginning
 							pagers[i].addClass('visible');
 							activePagers.push(pagers[i]);
 						}
@@ -134,7 +138,7 @@ var activePagers = [];
 						currentTop += pagers[i].outerHeight();
 						
 						if (direction == "next") {
-							//pagers.shift();
+							
 						}
 						else if (direction == "prev") {
 							

@@ -114,13 +114,19 @@ $transition-speed: 5s;
 				width: 100%;
 				text-align: left;
 				padding: 5px 0 5px 75px;
-				opacity: 0;
+				border: 1px solid black;
+				//opacity: 0;
+				transition: top $transition-speed ease, opacity $transition-speed ease;
 				//display: none;
 				
 				// page load {
 					//opacity: 0;
 				//}
-				transition: top $transition-speed ease, opacity $transition-speed ease;
+				
+				&.visible {
+					opacity: 1;
+					border: 1px solid silver;
+				}
 				
 				&.prev, &.active, &.next, &.next-2, &.next-3 {
 					display: block;

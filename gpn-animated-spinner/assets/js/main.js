@@ -1,4 +1,9 @@
+var pagers = [];
+
 (function(){
+	
+	// define out here for testing. move farther down in scope later.
+	
 	
 	window.onload = function()
 	{
@@ -53,108 +58,95 @@
 		//first slide
 		if (currentIndex == 1) {
 			if (prevIndex == total) { // final slide was previous
-				direction = "forward"
+				direction = "next"
 			}
 			else if (prevIndex > currentIndex) {
-				direction = "backward";
+				direction = "prev";
 			}
 		}
 		// final slide
 		else if (currentIndex == total) {
 			if (prevIndex == 1) { // first slide was previous
-				direction = "backward";
+				direction = "prev";
 			}
 			else if (prevIndex < currentIndex) {
-				direction = "forward";
+				direction = "next";
 			}
 		}
 		// middle slides
 		else { 
 			if (prevIndex < currentIndex) {
-				direction = "forward";
+				direction = "next";
 			}
-			else direction = "backward";
+			else direction = "prev";
 		}
 		if (prevIndex == currentIndex) return false;
 		return direction;
 	}
 	
-	var direction;
-	var prevCurrent;
-	var swiper = new Swiper('.swiper-container', {
-		pagination: '.spinner-pagination',
-		paginationClickable: true,
-		direction: 'vertical',
-		mousewheelControl: true,
-		paginationType: 'custom',
-		effect: 'fade',
-		parallax: true,
-		setWrapperSize: true,
-		loop: true,
-		prevButton: '.swiper-page-prev',
-		nextButton: '.swiper-page-next',
-		
-		paginationCustomRender: function(swiper, current, total) {
-			if (prevCurrent != current) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
-				var $pagination = $('.spinner-pagination');
-				var $allPagers = $pagination.find('.pager');
-				var $activePager = $('.spinner-pagination .pager').eq(current-1);
-				
-				var currentTop = 0; // calculate position of each pager
-				
-				//reset
-				$allPagers.not('.current').removeAttr('style'); // so that the set top value persists in order to animate correctly
-				$allPagers.removeClass('active prev current');
-				$activePager.addClass('active current'); // current class means that it is one of the pagers currently showing or going to show on next slide
-				$('.spinner-background').height($activePager.outerHeight()); // set white background height to same as active pager
-				
-				// shift all pagers
-				$activePager.addClass('active').css({'top': 0});
-				currentTop += $activePager.outerHeight();
-				var $prev = getPrevSibling($activePager).addClass('prev');
-				$prev.css('top', -1 * ($prev.outerHeight()));
-				var $next = getNextSibling($activePager).addClass('current').css({'top': currentTop, "opacity": .5});
-				currentTop += $next.outerHeight();
-				var $next2 = getNextSibling($next).addClass('current').css({'top': currentTop, "opacity": .25});
-				currentTop += $next2.outerHeight();
-				var $next3 = getNextSibling($next2).addClass('current').css({'top': currentTop, "opacity": .15});
-				currentTop += $next3.outerHeight();
-				
-				//debugger;
-				
-				// figure out which pagination should be queued up based on direction, then move it into place in preparation for animating in
-				var $queued = $();
-				$allPagers.removeClass('queued');
-				direction = calculateSlideDirection(prevCurrent, current, total);
-				if (direction == "forward") {
-					var queuedLocation = 0;
-					$('.spinner-pagination .current').each(function(){
-						queuedLocation += $(this).outerHeight();
-					});
-					$queued = $('.spinner-pagination .pager').eq(current+2);
-					$queued.addClass('no-transition');
-					$queued.css({'top': queuedLocation, 'opacity': 0});
-					$queued[0].offsetHeight; // this line clears cached CSS so that the transition property will be removed. See: http://stackoverflow.com/questions/11131875/what-is-the-cleanest-way-to-disable-css-transition-effects-temporarily
-					$queued.removeClass('no-transition');
-					$queued.css({'top': queuedLocation - $queued.outerHeight(), 'opacity': '.15'});
-				}
-				else if (direction == "backward") {
-					//$queued = $('.spinner-pagination .pager').eq(current-2);
-					//$queued.addClass('no-transition');
-					//$queued.css({'top':  -1 * ($queued.outerHeight())});
-					//$queued[0].offsetHeight; // this line clears cached CSS so that the transition property will be removed. See: http://stackoverflow.com/questions/11131875/what-is-the-cleanest-way-to-disable-css-transition-effects-temporarily
-					//$queued.removeClass('no-transition');
-				}
-				
-							
-				// Move page controls to active pager
-				var $pageControls = $allPagers.find('.swiper-page-prev, .swiper-page-next');
-				$activePager.append($pageControls);
-				prevCurrent = current;
-			}
-		}
-	});
 	
+	var initSpinner = function(){
+		
+		//var pagers = [];
+		$('.spinner-pagination .pager').each(function(){
+			pagers.push($(this));
+		});
+		
+		var prevSlideIndex = 0;
+		var swiper = new Swiper('.swiper-container', {
+			pagination: '.spinner-pagination',
+			paginationClickable: true,
+			direction: 'vertical',
+			mousewheelControl: true,
+			paginationType: 'custom',
+			effect: 'fade',
+			parallax: true,
+			setWrapperSize: true,
+			loop: true,
+			prevButton: '.swiper-page-prev',
+			nextButton: '.swiper-page-next',
+			
+			paginationCustomRender: function(swiper, current, total) {
+				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
+					var currentIndex = current-1;
+					var direction = calculateSlideDirection(prevSlideIndex, current, total);
+					var numberOfPagersShowing = 3;
+					var $pagination = $('.spinner-pagination');
+					var $allPagers = $pagination.find('.pager').removeClass('active visible');
+					var $activePager = pagers[currentIndex].addClass('active');
+					
+					console.log(pagers[0].text());
+					
+					var currentTop = 0; // calculate position of each pager
+
+					$.each(pagers, function(i){
+						
+						var wrapAroundIndex = -(total - (currentIndex + numberOfPagersShowing));
+						var hasWrapAround = currentIndex + numberOfPagersShowing > total;
+						if (i >= currentIndex && i < (currentIndex + numberOfPagersShowing) || (hasWrapAround && (i < wrapAroundIndex))) { // if currently showing range has to wrap around from the end back to the beginning
+							pagers[i].addClass('visible');
+						}
+						if (currentIndex + numberOfPagersShowing > total) { // when the visible range has to loop back around to the beginning to get all visible classes added
+							//pagers[total-(currentIndex + numberOfPagersShowing)].addClass('visible');
+						}
+						
+						pagers[i].css({'top': currentTop});
+						currentTop += pagers[i].outerHeight();
+						
+						if (direction == "next") {
+							//pagers.shift();
+						}
+						else if (direction == "prev") {
+							
+						}
+					});
+					prevSlideIndex = current;
+				}
+			}
+		});
+		return swiper;
+	}
+	var swiper = initSpinner();
 	// Add button interactions
 	$('.swiper-pagination').on('click', '.prev', function(){
 		swiper.slidePrev();

@@ -85,8 +85,12 @@
   width: 100%;
   text-align: left;
   padding: 5px 0 5px 75px;
-  opacity: 0;
+  border: 1px solid black;
   transition: top 5s ease, opacity 5s ease; }
+
+.animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
+  opacity: 1;
+  border: 1px solid silver; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.prev, .animated-spinner-hero .spinner-container .spinner-pagination .pager.active, .animated-spinner-hero .spinner-container .spinner-pagination .pager.next, .animated-spinner-hero .spinner-container .spinner-pagination .pager.next-2, .animated-spinner-hero .spinner-container .spinner-pagination .pager.next-3 {
   display: block; }

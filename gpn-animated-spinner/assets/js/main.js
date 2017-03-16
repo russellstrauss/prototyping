@@ -100,6 +100,7 @@ var activePagers = [];
 			direction: 'vertical',
 			mousewheelControl: true,
 			paginationType: 'custom',
+			speed: 500,
 			effect: 'fade',
 			parallax: true,
 			setWrapperSize: true,
@@ -136,7 +137,7 @@ var activePagers = [];
 							pagers.unshift(pagers.pop());
 						}
 						
-						console.log("index: [" + i + "]: " + pagers[i].text());
+						//console.log("index: [" + i + "]: " + pagers[i].text());
 						
 						// Set pager locations
 						if (i < numberOfPagersShowing) {
@@ -146,22 +147,46 @@ var activePagers = [];
 							pagers[i].addClass('visible');
 							pagers[i].addClass('item-' + i);
 							
-							pagers[i].css({'top': currentTop});
-							currentTop += pagers[i].outerHeight();
+							// if (direction == "prev" && i == 0) {
+							// 	// calculate total height needed
+							// 	$.each(function(index){
+									
+							// 	});
+							// }
+							// else {
+								pagers[i].css({'top': currentTop});
+								currentTop += pagers[i].outerHeight();
+							//}
+							
 						}
 						else { // Reset classes and remove top values for those that are no longer visible
 							pagers[i].removeClass('active visible').removeAttr('style');
 						}
 						
+						
+						
+						
+						
 						// Queue up location for next item to slide in
-						if (direction == "next" && i == numberOfPagersShowing) {
-							var queued = pagers[i].clone().css({'top': currentTop});
-							//$()
+						if (direction == "next" && i == numberOfPagersShowing-1) { 
+							pagers[i].css({'top': 0 - pagers[i].outerHeight()}).removeClass('active visible'); // slide up and out of the visible range
+							
+							pagers[i].on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+								$(this).remove();
+							});
+							var $queued = pagers[i].clone().css({'top': currentTop}).insertAfter(pagers[i]);
+							$queued.css({'top': currentTop - $queued.outerHeight()}).addClass('visible');
+							pagers[i] = $queued;
 						}
-						// else if (direction == "prev" && i == pagers.length-1) {
-						// 	//debugger;
-						// 	//pagers[i].css({'top': 0 - pagers[i].outerHeight()});
-						// }
+						if (direction == "prev" && i == 0) {
+							// slide out last item visible
+							
+							// calculate total height of visible pagers
+							//debugger;
+							
+							//var $queued = pagers[i].clone().css({'top': currentTop}).insertAfter(pagers[i]);
+						}
+						
 						
 						
 						
@@ -175,10 +200,10 @@ var activePagers = [];
 	}
 	var swiper = initSpinner();
 	// Add button interactions
-	$('.swiper-pagination').on('click', '.prev', function(){
+	$('.spinner-pagination').on('click', '.prev', function(){
 		swiper.slidePrev();
 	});
-	$('.swiper-pagination').on('click', '.next', function(){
+	$('.spinner-pagination').on('click', '.next', function(){
 		swiper.slideNext();
 	});
 	

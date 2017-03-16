@@ -1,4 +1,5 @@
 var pagers = [];
+var activePagers = [];
 
 (function(){
 	
@@ -110,10 +111,11 @@ var pagers = [];
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
 					var currentIndex = current-1;
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
-					var numberOfPagersShowing = 3;
+					var numberOfPagersShowing = 4;
 					var $pagination = $('.spinner-pagination');
 					var $allPagers = $pagination.find('.pager').removeClass('active visible');
 					var $activePager = pagers[currentIndex].addClass('active');
+					activePagers = [];
 					
 					console.log(pagers[0].text());
 					
@@ -125,9 +127,7 @@ var pagers = [];
 						var hasWrapAround = currentIndex + numberOfPagersShowing > total;
 						if (i >= currentIndex && i < (currentIndex + numberOfPagersShowing) || (hasWrapAround && (i < wrapAroundIndex))) { // if currently showing range has to wrap around from the end back to the beginning
 							pagers[i].addClass('visible');
-						}
-						if (currentIndex + numberOfPagersShowing > total) { // when the visible range has to loop back around to the beginning to get all visible classes added
-							//pagers[total-(currentIndex + numberOfPagersShowing)].addClass('visible');
+							activePagers.push(pagers[i]);
 						}
 						
 						pagers[i].css({'top': currentTop});

@@ -113,14 +113,13 @@ var activePagers = [];
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
 					var numberOfPagersShowing = 4;
 					var $pagination = $('.spinner-pagination');
-					var $allPagers = $pagination.find('.pager').removeClass('active visible');
+					var $allPagers = $pagination.find('.pager').removeClass('active visible item-0 item-1 item-2 item-3');
+					$allPagers.not('.visible').removeAttr('style');
 					var $activePager = pagers[currentIndex].addClass('active');
 					activePagers = [];
-					
-					console.log(pagers[0].text());
-					
+										
 					var currentTop = 0; // calculate position of each pager
-
+					
 					$.each(pagers, function(i){
 						
 						// ideas for tomorrow
@@ -131,11 +130,21 @@ var activePagers = [];
 						var hasWrapAround = currentIndex + numberOfPagersShowing > total;
 						if (i >= currentIndex && i < (currentIndex + numberOfPagersShowing) || (hasWrapAround && (i < wrapAroundIndex))) { // if visible range has to wrap around from the end back to the beginning
 							pagers[i].addClass('visible');
+							
+							
+							// Add to arrays in the order which they will appear (top to bottom)
+							if (i < wrapAroundIndex) {
+								//debugger;
+								//activePagers.push(pagers[i]);
+								//activePagers.push(pagers[i]);
+							}
+							else {
+								//activePagers.push(pagers[i]);
+								//activePagers.push(pagers[i]);
+							}
 							activePagers.push(pagers[i]);
+							
 						}
-						
-						pagers[i].css({'top': currentTop});
-						currentTop += pagers[i].outerHeight();
 						
 						if (direction == "next") {
 							
@@ -143,6 +152,17 @@ var activePagers = [];
 						else if (direction == "prev") {
 							
 						}
+					});
+					
+					//activePagers.reverse();
+					// Then render
+					var visibleCount = 0;
+					$.each(activePagers, function(i){
+						activePagers[i].addClass('item-' + visibleCount);
+						activePagers[i].css({'top': currentTop});
+						currentTop += activePagers[i].outerHeight();
+						
+						visibleCount++;
 					});
 					prevSlideIndex = current;
 				}

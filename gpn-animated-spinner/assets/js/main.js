@@ -114,7 +114,7 @@ var activePagers = [];
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
 					var currentIndex = current-1;
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
-					var numberOfPagersShowing = 4;
+					var numberOfPagersShowing = 3;
 					var $pagination = $('.spinner-pagination');
 					var $allPagers = $pagination.find('.pager').removeClass('item-0 item-1 item-2 item-3');
 					
@@ -122,11 +122,13 @@ var activePagers = [];
 										
 					var currentTop = 0; // calculate position of each pager
 					
+					// loop through pagination
 					$.each(pagers, function(i){
 						
 						// ideas for tomorrow
 						// create clones to swoop in from above or below, then place the original in its place, show it, then delete the clones
 						
+						// Shift pager array to have the active ones always at the top
 						if (direction == "next" && i == 0) {
 							pagers.push(pagers.shift());
 						}
@@ -134,8 +136,9 @@ var activePagers = [];
 							pagers.unshift(pagers.pop());
 						}
 						
-						//console.log("index: [" + i + "]: " + pagers[i].text());
+						console.log("index: [" + i + "]: " + pagers[i].text());
 						
+						// Set pager locations
 						if (i < numberOfPagersShowing) {
 							if (i == 0) {
 								pagers[0].addClass('active')
@@ -146,22 +149,23 @@ var activePagers = [];
 							pagers[i].css({'top': currentTop});
 							currentTop += pagers[i].outerHeight();
 						}
-						else {
+						else { // Reset classes and remove top values for those that are no longer visible
 							pagers[i].removeClass('active visible').removeAttr('style');
 						}
 						
+						// Queue up location for next item to slide in
+						if (direction == "next" && i == numberOfPagersShowing) {
+							var queued = pagers[i].clone().css({'top': currentTop});
+							//$()
+						}
+						// else if (direction == "prev" && i == pagers.length-1) {
+						// 	//debugger;
+						// 	//pagers[i].css({'top': 0 - pagers[i].outerHeight()});
+						// }
 						
 						
 						
 					});
-					
-					//var $activePager = pagers[0].addClass('active'); // putting down here so that active class is added after page has been shifted
-					//$allPagers.not('.visible').removeAttr('style');
-					
-					// queue up location for next item to slide in, make sure to do AFTER style attr is removed
-					//if (direction == "next" && i == numberOfPagersShowing) {
-						//pagers[i].css({'top': currentTop});
-					//}
 					
 					prevSlideIndex = current; // used to compute direction change
 				}

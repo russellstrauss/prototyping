@@ -113,21 +113,14 @@ var activePagers = [];
 				console.clear();
 				
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
-					var currentIndex = current-1;
-					var direction = calculateSlideDirection(prevSlideIndex, current, total);
 					var numberOfPagersShowing = 4;
-					var $pagination = $('.spinner-pagination');
-					var $allPagers = $pagination.find('.pager').removeClass('item-0 item-1 item-2 item-3');
-					
-					activePagers = [];
+					var $allPagers = $('.spinner-pagination').find('.pager').removeClass('item-0 item-1 item-2 item-3');
+					var direction = calculateSlideDirection(prevSlideIndex, current, total);
 										
 					var currentTop = 0; // calculate position of each pager
 					
 					// loop through pagination
 					$.each(pagers, function(i){
-						
-						// ideas for tomorrow
-						// create clones to swoop in from above or below, then place the original in its place, show it, then delete the clones
 						
 						// Shift pager array to have the active ones always at the top
 						if (direction == "next" && i == 0) {
@@ -136,8 +129,8 @@ var activePagers = [];
 						else if (direction == "prev" && i == 0) {
 							pagers.unshift(pagers.pop());
 						}
-						
-						//console.log("index: [" + i + "]: " + pagers[i].text());
+						//debugger;
+						console.log("index: [" + i + "]: " + pagers[i].text());
 						
 						// Set pager locations
 						if (i < numberOfPagersShowing) {
@@ -147,8 +140,16 @@ var activePagers = [];
 							pagers[i].addClass('visible');
 							pagers[i].addClass('item-' + i);
 							
-							pagers[i].css({'top': currentTop});
+							if (i == 0 && direction == "prev") {
+								//debugger;
+								var $queued = pagers[i].clone().removeClass('active visible').css({'top': currentTop - pagers[i].outerHeight()}).insertAfter(pagers[i]);
+								$queued.css({'top': 0}).addClass('visible');
+							}
+							else {
+								pagers[i].css({'top': currentTop});
+							}
 							currentTop += pagers[i].outerHeight();
+							
 						}
 						else { // Reset classes and remove top values for those that are no longer visible
 							pagers[i].removeClass('active visible').removeAttr('style');

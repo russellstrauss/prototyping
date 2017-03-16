@@ -108,14 +108,16 @@ var activePagers = [];
 			nextButton: '.swiper-page-next',
 			
 			paginationCustomRender: function(swiper, current, total) {
+				
+				console.clear();
+				
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
 					var currentIndex = current-1;
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
 					var numberOfPagersShowing = 4;
 					var $pagination = $('.spinner-pagination');
-					var $allPagers = $pagination.find('.pager').removeClass('active visible item-0 item-1 item-2 item-3');
-					$allPagers.not('.visible').removeAttr('style');
-					var $activePager = pagers[currentIndex].addClass('active');
+					var $allPagers = $pagination.find('.pager').removeClass('item-0 item-1 item-2 item-3');
+					
 					activePagers = [];
 										
 					var currentTop = 0; // calculate position of each pager
@@ -123,48 +125,45 @@ var activePagers = [];
 					$.each(pagers, function(i){
 						
 						// ideas for tomorrow
-						// show .visible classes (hide the rest) then use activePagers to calculate the visibles' positioning
 						// create clones to swoop in from above or below, then place the original in its place, show it, then delete the clones
 						
-						var wrapAroundIndex = -(total - (currentIndex + numberOfPagersShowing));
-						var hasWrapAround = currentIndex + numberOfPagersShowing > total;
-						if (i >= currentIndex && i < (currentIndex + numberOfPagersShowing) || (hasWrapAround && (i < wrapAroundIndex))) { // if visible range has to wrap around from the end back to the beginning
-							pagers[i].addClass('visible');
-							
-							
-							// Add to arrays in the order which they will appear (top to bottom)
-							if (i < wrapAroundIndex) {
-								//debugger;
-								//activePagers.push(pagers[i]);
-								//activePagers.push(pagers[i]);
-							}
-							else {
-								//activePagers.push(pagers[i]);
-								//activePagers.push(pagers[i]);
-							}
-							activePagers.push(pagers[i]);
-							
+						if (direction == "next" && i == 0) {
+							pagers.push(pagers.shift());
+						}
+						else if (direction == "prev" && i == 0) {
+							pagers.unshift(pagers.pop());
 						}
 						
-						if (direction == "next") {
+						//console.log("index: [" + i + "]: " + pagers[i].text());
+						
+						if (i < numberOfPagersShowing) {
+							if (i == 0) {
+								pagers[0].addClass('active')
+							}
+							pagers[i].addClass('visible');
+							pagers[i].addClass('item-' + i);
 							
+							pagers[i].css({'top': currentTop});
+							currentTop += pagers[i].outerHeight();
 						}
-						else if (direction == "prev") {
-							
+						else {
+							pagers[i].removeClass('active visible').removeAttr('style');
 						}
+						
+						
+						
+						
 					});
 					
-					//activePagers.reverse();
-					// Then render
-					var visibleCount = 0;
-					$.each(activePagers, function(i){
-						activePagers[i].addClass('item-' + visibleCount);
-						activePagers[i].css({'top': currentTop});
-						currentTop += activePagers[i].outerHeight();
-						
-						visibleCount++;
-					});
-					prevSlideIndex = current;
+					//var $activePager = pagers[0].addClass('active'); // putting down here so that active class is added after page has been shifted
+					//$allPagers.not('.visible').removeAttr('style');
+					
+					// queue up location for next item to slide in, make sure to do AFTER style attr is removed
+					//if (direction == "next" && i == numberOfPagersShowing) {
+						//pagers[i].css({'top': currentTop});
+					//}
+					
+					prevSlideIndex = current; // used to compute direction change
 				}
 			}
 		});

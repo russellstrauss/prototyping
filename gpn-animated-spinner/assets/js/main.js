@@ -115,7 +115,7 @@ var activePagers = [];
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
 					var currentIndex = current-1;
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
-					var numberOfPagersShowing = 3;
+					var numberOfPagersShowing = 4;
 					var $pagination = $('.spinner-pagination');
 					var $allPagers = $pagination.find('.pager').removeClass('item-0 item-1 item-2 item-3');
 					
@@ -147,17 +147,8 @@ var activePagers = [];
 							pagers[i].addClass('visible');
 							pagers[i].addClass('item-' + i);
 							
-							// if (direction == "prev" && i == 0) {
-							// 	// calculate total height needed
-							// 	$.each(function(index){
-									
-							// 	});
-							// }
-							// else {
-								pagers[i].css({'top': currentTop});
-								currentTop += pagers[i].outerHeight();
-							//}
-							
+							pagers[i].css({'top': currentTop});
+							currentTop += pagers[i].outerHeight();
 						}
 						else { // Reset classes and remove top values for those that are no longer visible
 							pagers[i].removeClass('active visible').removeAttr('style');
@@ -168,7 +159,7 @@ var activePagers = [];
 						
 						
 						// Queue up location for next item to slide in
-						if (direction == "next" && i == numberOfPagersShowing-1) { 
+						if (direction == "next" && i == numberOfPagersShowing-1) {
 							pagers[i].css({'top': 0 - pagers[i].outerHeight()}).removeClass('active visible'); // slide up and out of the visible range
 							
 							pagers[i].on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
@@ -177,14 +168,6 @@ var activePagers = [];
 							var $queued = pagers[i].clone().css({'top': currentTop}).insertAfter(pagers[i]);
 							$queued.css({'top': currentTop - $queued.outerHeight()}).addClass('visible');
 							pagers[i] = $queued;
-						}
-						if (direction == "prev" && i == 0) {
-							// slide out last item visible
-							
-							// calculate total height of visible pagers
-							//debugger;
-							
-							//var $queued = pagers[i].clone().css({'top': currentTop}).insertAfter(pagers[i]);
 						}
 						
 						

@@ -17,7 +17,7 @@
 
 #test-next {
   position: absolute;
-  bottom: 0;
+  top: 150px;
   left: 0;
   height: 100px;
   width: 100px;
@@ -67,10 +67,16 @@
 
 .animated-spinner-hero .spinner-container {
   position: absolute;
-  height: 220px;
   bottom: 0;
+  width: 100%;
+  border: 1px solid red;
   z-index: 10;
   padding-right: 15px; }
+
+.animated-spinner-hero .spinner-container .spinner-pagination {
+  bottom: 0;
+  margin-bottom: 0;
+  padding-left: 0; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination.page-load-animation .pager {
   transition: opacity 1s ease; }
@@ -85,7 +91,7 @@
   width: 100%;
   text-align: left;
   padding: 5px 0 5px 75px;
-  border: 1px solid black;
+  border: 1px solid transparent;
   opacity: 0;
   transition: top 0.5s ease, opacity 0.5s ease; }
 

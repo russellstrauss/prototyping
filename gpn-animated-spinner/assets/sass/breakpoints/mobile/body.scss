@@ -10,7 +10,7 @@
 }
 #test-next {
 	position: absolute;
-	bottom: 0;
+	top: 150px;
 	left: 0;
 	height: 100px;
 	width: 100px;
@@ -93,12 +93,15 @@ $transition-speed: .5s;
 	}
 	.spinner-container {
 		position: absolute;
-		height: 220px;
 		bottom: 0;
+		width: 100%;
+		border: 1px solid red;
 		z-index: $base-z-index;
 		padding-right: $base-mobile-padding;
 		.spinner-pagination {
-			
+			bottom: 0;
+			margin-bottom: 0;
+			padding-left: 0;
 			&.page-load-animation {
 				.pager {
 					transition: opacity 1s ease;
@@ -114,7 +117,7 @@ $transition-speed: .5s;
 				width: 100%;
 				text-align: left;
 				padding: 5px 0 5px 75px;
-				border: 1px solid black;
+				border: 1px solid transparent;
 				opacity: 0;
 				transition: top $transition-speed ease, opacity $transition-speed ease;
 				//display: none;

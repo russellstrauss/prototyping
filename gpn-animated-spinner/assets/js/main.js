@@ -113,11 +113,12 @@ var activePagers = [];
 				console.clear();
 				
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
-					var numberOfPagersShowing = 4;
+					var numberOfPagersShowing = 7;
 					var $allPagers = $('.spinner-pagination').find('.pager').removeClass('item-0 item-1 item-2 item-3');
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
-										
+					
 					var currentTop = 0; // calculate position of each pager
+					var paginationHeight = 0;
 					
 					// loop through pagination
 					$.each(pagers, function(i){
@@ -130,16 +131,19 @@ var activePagers = [];
 							pagers.unshift(pagers.pop());
 						}
 						
+						//debugger;
+						
 						// Set pager locations
 						if (i < numberOfPagersShowing) {
-							if (i == 0) {
+							if (i == 0 && direction != "prev") {
 								pagers[0].addClass('active')
 							}
-							pagers[i].addClass('visible');
+							
 							pagers[i].addClass('item-' + i);
 							
 							// Queue up location for previous item to slide in
 							if (i == 0 && direction == "prev") { 
+								
 								pagers[i].css({'top': parseInt(pagers[i].css('top')) + pagers[i].outerHeight()}).removeClass('active visible'); // fade out
 								
 								var $queued = pagers[i].clone().css({'top': 0 - pagers[i].outerHeight()}).insertAfter(pagers[i]);
@@ -152,9 +156,11 @@ var activePagers = [];
 								pagers[i] = $queued; // set new pager in array since old one will fade out and be removed
 							}
 							else { // When previous button has not been pressed
+								pagers[i].addClass('visible');
 								pagers[i].css({'top': currentTop});
 							}
-							currentTop += pagers[i].outerHeight(); // calculate each pager's position 
+							currentTop += pagers[i].outerHeight(); // calculate each pager's position
+							paginationHeight += pagers[i].outerHeight();
 							
 						}
 						else { // Reset classes and remove top values for those that are no longer visible
@@ -174,6 +180,8 @@ var activePagers = [];
 						}
 						
 					});
+					
+					$('.spinner-pagination').height(paginationHeight);
 					
 					prevSlideIndex = current; // used to compute direction change
 				}

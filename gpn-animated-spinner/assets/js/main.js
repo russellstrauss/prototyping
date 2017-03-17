@@ -129,8 +129,6 @@ var activePagers = [];
 						else if (direction == "prev" && i == 0) {
 							pagers.unshift(pagers.pop());
 						}
-						//debugger;
-						console.log("index: [" + i + "]: " + pagers[i].text());
 						
 						// Set pager locations
 						if (i < numberOfPagersShowing) {
@@ -140,24 +138,28 @@ var activePagers = [];
 							pagers[i].addClass('visible');
 							pagers[i].addClass('item-' + i);
 							
-							if (i == 0 && direction == "prev") {
-								//debugger;
-								var $queued = pagers[i].clone().removeClass('active visible').css({'top': currentTop - pagers[i].outerHeight()}).insertAfter(pagers[i]);
-								$queued.css({'top': 0}).addClass('visible');
+							// Queue up location for previous item to slide in
+							if (i == 0 && direction == "prev") { 
+								pagers[i].css({'top': parseInt(pagers[i].css('top')) + pagers[i].outerHeight()}).removeClass('active visible'); // fade out
+								
+								var $queued = pagers[i].clone().css({'top': 0 - pagers[i].outerHeight()}).insertAfter(pagers[i]);
+								var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this is accessed
+								$queued.addClass('active visible').css({'top': 0});
+
+								pagers[i].on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+									$(this).remove();
+								});
+								pagers[i] = $queued; // set new pager in array since old one will fade out and be removed
 							}
-							else {
+							else { // When previous button has not been pressed
 								pagers[i].css({'top': currentTop});
 							}
-							currentTop += pagers[i].outerHeight();
+							currentTop += pagers[i].outerHeight(); // calculate each pager's position 
 							
 						}
 						else { // Reset classes and remove top values for those that are no longer visible
 							pagers[i].removeClass('active visible').removeAttr('style');
 						}
-						
-						
-						
-						
 						
 						// Queue up location for next item to slide in
 						if (direction == "next" && i == numberOfPagersShowing-1) {
@@ -170,9 +172,6 @@ var activePagers = [];
 							$queued.css({'top': currentTop - $queued.outerHeight()}).addClass('visible');
 							pagers[i] = $queued;
 						}
-						
-						
-						
 						
 					});
 					

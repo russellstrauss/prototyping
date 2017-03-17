@@ -53,6 +53,28 @@ var activePagers = [];
 		}
 		else return jQueryObject.prev();
 	}
+	var copyAndShiftPagerPrev = function(pager) {
+		pager.css({'top': parseInt(pager.css('top')) + pager.outerHeight()}).removeClass('active visible'); // fade out
+		
+		var $queued = pager.clone().css({'top': 0 - pager.outerHeight()}).insertAfter(pager);
+		var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this property is accessed
+		$queued.addClass('active visible').css({'top': 0});
+
+		pager.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+			$(this).remove();
+		});
+		return $queued; // set new pager in array since old one will fade out and be removed
+	}
+	var copyAndShiftPagerNext = function(pager, yPos) {
+		pager.css({'top': 0 - pager.outerHeight()}).removeClass('active visible'); // slide up and out of the visible range
+		
+		pager.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+			$(this).remove();
+		});
+		var $queued = pager.clone().css({'top': yPos}).insertAfter(pager);
+		$queued.css({'top': yPos - $queued.outerHeight()}).addClass('visible');
+		return $queued;
+	}
 	
 	var calculateSlideDirection = function(prevIndex, currentIndex, total) {
 		var direction;
@@ -131,8 +153,6 @@ var activePagers = [];
 							pagers.unshift(pagers.pop());
 						}
 						
-						//debugger;
-						
 						// Set pager locations
 						if (i < numberOfPagersShowing) {
 							if (i == 0 && direction != "prev") {
@@ -143,17 +163,7 @@ var activePagers = [];
 							
 							// Queue up location for previous item to slide in
 							if (i == 0 && direction == "prev") { 
-								
-								pagers[i].css({'top': parseInt(pagers[i].css('top')) + pagers[i].outerHeight()}).removeClass('active visible'); // fade out
-								
-								var $queued = pagers[i].clone().css({'top': 0 - pagers[i].outerHeight()}).insertAfter(pagers[i]);
-								var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this is accessed
-								$queued.addClass('active visible').css({'top': 0});
-
-								pagers[i].on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
-									$(this).remove();
-								});
-								pagers[i] = $queued; // set new pager in array since old one will fade out and be removed
+								pagers[i] = copyAndShiftPagerPrev(pagers[i]);
 							}
 							else { // When previous button has not been pressed
 								pagers[i].addClass('visible');
@@ -169,14 +179,7 @@ var activePagers = [];
 						
 						// Queue up location for next item to slide in
 						if (direction == "next" && i == numberOfPagersShowing-1) {
-							pagers[i].css({'top': 0 - pagers[i].outerHeight()}).removeClass('active visible'); // slide up and out of the visible range
-							
-							pagers[i].on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
-								$(this).remove();
-							});
-							var $queued = pagers[i].clone().css({'top': currentTop}).insertAfter(pagers[i]);
-							$queued.css({'top': currentTop - $queued.outerHeight()}).addClass('visible');
-							pagers[i] = $queued;
+							pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop);
 						}
 						
 					});

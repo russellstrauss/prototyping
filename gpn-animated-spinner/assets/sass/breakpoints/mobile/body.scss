@@ -19,17 +19,6 @@
 	cursor: pointer;
 }
 
-#box {
-	position: absolute;
-	height: 100px;
-	width: 100px;
-	background-color: red;
-	top: 100px;
-	left: 100px;
-	transition: left 2s ease;
-}
-
-
 @mixin OpenSansLight {
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 100;
@@ -95,7 +84,7 @@ $transition-speed: .5s;
 		position: absolute;
 		bottom: 0;
 		width: 100%;
-		border: 1px solid red;
+		//border: 1px solid red;
 		z-index: $base-z-index;
 		padding-right: $base-mobile-padding;
 		.spinner-pagination {

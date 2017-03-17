@@ -25,15 +25,6 @@
   z-index: 9999;
   cursor: pointer; }
 
-#box {
-  position: absolute;
-  height: 100px;
-  width: 100px;
-  background-color: red;
-  top: 100px;
-  left: 100px;
-  transition: left 2s ease; }
-
 .no-transition {
   -webkit-transition: none !important;
   -moz-transition: none !important;
@@ -69,7 +60,6 @@
   position: absolute;
   bottom: 0;
   width: 100%;
-  border: 1px solid red;
   z-index: 10;
   padding-right: 15px; }
 

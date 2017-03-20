@@ -73,7 +73,7 @@ var activePagers = [];
 	
 	var copyAndShiftPagerPrev = function(pager) {
 		pager.css({'top': parseInt(pager.css('top')) + pager.outerHeight()}).removeClass('active visible'); // fade out
-		
+		console.log('old method');
 		var $queued = pager.clone().css({'top': 0 - pager.outerHeight()}).insertAfter(pager);
 		var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this property is accessed
 		$queued.addClass('active visible').css({'top': 0});
@@ -93,126 +93,39 @@ var activePagers = [];
 		return $queued;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	var copyAndShiftPagerPrev2 = function(pagerFadeOut, pagerFadeIn) {
-		// pagerFadeOut.css({'top': parseInt(pagerFadeOut.css('top')) + pagerFadeOut.outerHeight()}).removeClass('active visible'); // fade out
-		
-		// var $queued = pagerFadeIn.clone().css({'top': 0 - pagerFadeIn.outerHeight()}).insertAfter(pagerFadeIn);
-		// var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this property is accessed
-		// $queued.addClass('active visible').css({'top': 0});
-
-		// pagerFadeIn.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
-		// 	$(this).remove();
-		// });
-		// return $queued; // set new pager in array since old one will fade out and be removed
-		
+	var copyAndShiftPagerInRangePrev = function(pagerFadeOut, pagerFadeIn) {
 		pagerFadeOut.css({'top': parseInt(pagerFadeOut.css('top')) + pagerFadeOut.outerHeight()}).removeClass('active visible'); // fade out
 		
-		//pagerFadeIn.css({'top': 0 - pagerFadeIn.outerHeight()});
-		
-		var $queued = pagerFadeIn.clone().addClass('cloned');
-		$queued.insertAfter(pagerFadeIn);
-		$queued.css({'top': 0 - $queued.outerHeight()});
-		console.log(0 - $queued.outerHeight());
-		
-		pagerFadeIn.remove();
-		//$queued.css({'top': 0});
-		
-		
-		
-		
-		//$queued.css({'top': 0});
-		
-		
-		
-		
-		
-		
-		// var $queued = pagerFadeIn.clone().css({'top': 0 - pagerFadeIn.outerHeight()}).insertAfter(pagerFadeIn);
-		// var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this property is accessed
-		// $queued.addClass('active visible').css({'top': 0});
+		var $queued = pagerFadeIn.clone().css({'top': 0 - pagerFadeIn.outerHeight()}).insertAfter(pagerFadeIn).removeClass('active visible');
+		pagerFadeIn.hide();
+		$queued.addClass('active visible').css({'top': 0});
 
-		// pagerFadeIn.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
-		// 	$(this).remove();
-		// });
+		$queued.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+			$(this).remove();
+			pagerFadeIn.addClass('visible').removeAttr('style').css({'top': 0});
+		});
 		return pagerFadeIn;
 	}
+
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	var copyAndShiftPagerNext2 = function(pagerFadeOut, pagerFadeIn, yPos) {
+	var copyAndShiftPagerInRangeNext = function(pagerFadeOut, pagerFadeIn, yPos) {
 		var newTop = 0 - pagerFadeOut.outerHeight();
 		pagerFadeOut.css({'top': newTop});
 		pagerFadeOut.removeClass('active visible').addClass('transitioning'); // slide up and out of the visible range		
 		pagerFadeOut.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
 			$(this).removeClass('transitioning');//.removeAttr('style');
 		});
-		//debugger;
-		pagerFadeIn.css({'top': yPos});
-		pagerFadeIn.css({'top': yPos - pagerFadeIn.outerHeight()}).addClass('visible');
 		
+		var $queued = pagerFadeIn.clone().css({'top': yPos}).insertAfter(pagerFadeIn).removeClass('active visible');
+		pagerFadeIn.hide();
+		$queued.addClass('visible').css({'top': yPos - $queued.outerHeight()});
 
-		//return $queued;
+		$queued.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+			pagerFadeIn.remove();
+			//pagerFadeIn.addClass('visible').removeAttr('style').css({'top': yPos - $queued.outerHeight()});
+			console.log('transition end');
+		});
+		return $queued;
 	}
 	
 	var initSpinner = function(){
@@ -242,7 +155,7 @@ var activePagers = [];
 				console.clear();
 				
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
-					var numberOfPagersShowing = 4;
+					var numberOfPagersShowing = 7;
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
 					
 					var $allPagers = $('.spinner-pagination').find('.pager').removeClass('active');
@@ -273,11 +186,18 @@ var activePagers = [];
 							
 							// Queue up location for previous item to slide in
 							if (i == 0 && direction == "prev") { 
-								pagers[i] = copyAndShiftPagerPrev2(pagers[i + numberOfPagersShowing], pagers[i]);
+								if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
+									pagers[i] = copyAndShiftPagerPrev(pagers[i]);
+								}
+								else { // If only showing a range of pagers and not all pagers
+									pagers[i] = copyAndShiftPagerInRangePrev(pagers[i + numberOfPagersShowing], pagers[i]);
+								}
 							}
 							else {
-								pagers[i].addClass('visible');
-								pagers[i].css({'top': currentTop});
+								if (!pagers[i].attr('class').includes('transitioning')) {
+									pagers[i].addClass('visible');
+									pagers[i].css({'top': currentTop});
+								}
 							}
 							currentTop += pagers[i].outerHeight(); // calculate each pager's position
 														
@@ -288,15 +208,16 @@ var activePagers = [];
 							}
 						}
 						
-						
-						
 						// Queue up location for next item to slide in
 						if (direction == "next" && i == numberOfPagersShowing - 1) {
 							
-							copyAndShiftPagerNext2(pagers[total-1], pagers[i], currentTop);
+							if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
+								pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop);
+							}
+							else { // If only showing a range of pagers and not all pagers
+								pagers[i] = copyAndShiftPagerInRangeNext(pagers[total-1], pagers[i], currentTop);
+							}
 							
-							
-							//pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop);
 						}
 						
 					});

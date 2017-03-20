@@ -84,14 +84,135 @@ var activePagers = [];
 		return $queued; // set new pager in array since old one will fade out and be removed
 	}
 	var copyAndShiftPagerNext = function(pager, yPos) {
-		pager.css({'top': 0 - pager.outerHeight()}).removeClass('active visible'); // slide up and out of the visible range
-		
+		pager.css({'top': 0 - pager.outerHeight()}).removeClass('active visible'); // slide up and out of the visible range		
 		pager.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
 			$(this).remove();
 		});
 		var $queued = pager.clone().css({'top': yPos}).insertAfter(pager);
 		$queued.css({'top': yPos - $queued.outerHeight()}).addClass('visible');
 		return $queued;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	var copyAndShiftPagerPrev2 = function(pagerFadeOut, pagerFadeIn) {
+		// pagerFadeOut.css({'top': parseInt(pagerFadeOut.css('top')) + pagerFadeOut.outerHeight()}).removeClass('active visible'); // fade out
+		
+		// var $queued = pagerFadeIn.clone().css({'top': 0 - pagerFadeIn.outerHeight()}).insertAfter(pagerFadeIn);
+		// var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this property is accessed
+		// $queued.addClass('active visible').css({'top': 0});
+
+		// pagerFadeIn.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+		// 	$(this).remove();
+		// });
+		// return $queued; // set new pager in array since old one will fade out and be removed
+		
+		pagerFadeOut.css({'top': parseInt(pagerFadeOut.css('top')) + pagerFadeOut.outerHeight()}).removeClass('active visible'); // fade out
+		
+		//pagerFadeIn.css({'top': 0 - pagerFadeIn.outerHeight()});
+		
+		var $queued = pagerFadeIn.clone().addClass('cloned');
+		$queued.insertAfter(pagerFadeIn);
+		$queued.css({'top': 0 - $queued.outerHeight()});
+		console.log(0 - $queued.outerHeight());
+		
+		pagerFadeIn.remove();
+		//$queued.css({'top': 0});
+		
+		
+		
+		
+		//$queued.css({'top': 0});
+		
+		
+		
+		
+		
+		
+		// var $queued = pagerFadeIn.clone().css({'top': 0 - pagerFadeIn.outerHeight()}).insertAfter(pagerFadeIn);
+		// var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this property is accessed
+		// $queued.addClass('active visible').css({'top': 0});
+
+		// pagerFadeIn.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+		// 	$(this).remove();
+		// });
+		return pagerFadeIn;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	var copyAndShiftPagerNext2 = function(pagerFadeOut, pagerFadeIn, yPos) {
+		var newTop = 0 - pagerFadeOut.outerHeight();
+		pagerFadeOut.css({'top': newTop});
+		pagerFadeOut.removeClass('active visible').addClass('transitioning'); // slide up and out of the visible range		
+		pagerFadeOut.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+			$(this).removeClass('transitioning');//.removeAttr('style');
+		});
+		//debugger;
+		pagerFadeIn.css({'top': yPos});
+		pagerFadeIn.css({'top': yPos - pagerFadeIn.outerHeight()}).addClass('visible');
+		
+
+		//return $queued;
 	}
 	
 	var initSpinner = function(){
@@ -121,12 +242,12 @@ var activePagers = [];
 				console.clear();
 				
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
-					var numberOfPagersShowing = 6;
+					var numberOfPagersShowing = 4;
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
 					
 					var $allPagers = $('.spinner-pagination').find('.pager').removeClass('active');
 					$allPagers.removeClass(function (index, className) {
-						return (className.match (/item-[0-9]/g) || []).join(' '); // remove all classes in the form [item-* where * is a number
+						return (className.match (/item-[0-9]/g) || []).join(' '); // remove all classes in the form [item-*] where * is a number
 					});
 					
 					var currentTop = 0; // calculate position of each pager
@@ -152,7 +273,7 @@ var activePagers = [];
 							
 							// Queue up location for previous item to slide in
 							if (i == 0 && direction == "prev") { 
-								pagers[i] = copyAndShiftPagerPrev(pagers[i]);
+								pagers[i] = copyAndShiftPagerPrev2(pagers[i + numberOfPagersShowing], pagers[i]);
 							}
 							else {
 								pagers[i].addClass('visible');
@@ -162,12 +283,20 @@ var activePagers = [];
 														
 						}
 						else { // Reset classes and remove top values for those that are no longer visible
-							pagers[i].removeClass('active visible').removeAttr('style');
+							if (!pagers[i].attr('class').includes('transitioning')) {
+								//pagers[i].not('transitioning').removeClass('active visible').removeAttr('style');
+							}
 						}
+						
+						
 						
 						// Queue up location for next item to slide in
 						if (direction == "next" && i == numberOfPagersShowing - 1) {
-							pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop);
+							
+							copyAndShiftPagerNext2(pagers[total-1], pagers[i], currentTop);
+							
+							
+							//pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop);
 						}
 						
 					});

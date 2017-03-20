@@ -36,12 +36,14 @@
   height: 100vh; }
 
 .animated-spinner-hero .swiper-wrapper .swiper-slide {
+  background: black !important;
   background-position: center center;
   background-size: cover;
   padding-left: 15px;
   padding-right: 15px; }
 
 .animated-spinner-hero .swiper-wrapper .swiper-slide .headline {
+  display: none;
   color: white; }
 
 .animated-spinner-hero .swiper-wrapper .swiper-slide .headline h2 {

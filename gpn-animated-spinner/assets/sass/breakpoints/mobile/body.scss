@@ -118,18 +118,8 @@ $transition-speed: .5s;
 				//}
 				
 				&.visible {
-					opacity: 1;
+					opacity: 0;
 					border: 1px solid silver;
-				}
-				
-				&.prev, &.active, &.next, &.next-2, &.next-3 {
-					display: block;
-				}
-				
-				&.prev {
-					transition: none;
-					opacity: 1;
-					color: tomato;
 				}
 				
 				&.active {

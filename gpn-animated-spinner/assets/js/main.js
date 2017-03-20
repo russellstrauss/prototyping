@@ -113,17 +113,15 @@ var activePagers = [];
 		pagerFadeOut.css({'top': newTop});
 		pagerFadeOut.removeClass('active visible').addClass('transitioning'); // slide up and out of the visible range		
 		pagerFadeOut.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
-			$(this).removeClass('transitioning');//.removeAttr('style');
+			$(this).removeClass('transitioning');
 		});
-		
+
 		var $queued = pagerFadeIn.clone().css({'top': yPos}).insertAfter(pagerFadeIn).removeClass('active visible');
 		pagerFadeIn.hide();
 		$queued.addClass('visible').css({'top': yPos - $queued.outerHeight()});
 
 		$queued.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
 			pagerFadeIn.remove();
-			//pagerFadeIn.addClass('visible').removeAttr('style').css({'top': yPos - $queued.outerHeight()});
-			console.log('transition end');
 		});
 		return $queued;
 	}
@@ -155,7 +153,7 @@ var activePagers = [];
 				console.clear();
 				
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
-					var numberOfPagersShowing = 7;
+					var numberOfPagersShowing = 4;
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
 					
 					var $allPagers = $('.spinner-pagination').find('.pager').removeClass('active');

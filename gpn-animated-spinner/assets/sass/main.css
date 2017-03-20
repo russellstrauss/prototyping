@@ -88,16 +88,8 @@
   transition: top 0.5s ease, opacity 0.5s ease; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
-  opacity: 1;
+  opacity: 0;
   border: 1px solid silver; }
-
-.animated-spinner-hero .spinner-container .spinner-pagination .pager.prev, .animated-spinner-hero .spinner-container .spinner-pagination .pager.active, .animated-spinner-hero .spinner-container .spinner-pagination .pager.next, .animated-spinner-hero .spinner-container .spinner-pagination .pager.next-2, .animated-spinner-hero .spinner-container .spinner-pagination .pager.next-3 {
-  display: block; }
-
-.animated-spinner-hero .spinner-container .spinner-pagination .pager.prev {
-  transition: none;
-  opacity: 1;
-  color: tomato; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
   top: 0;
@@ -165,6 +157,8 @@
     font-size: 20px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
     padding-left: 75px; }
+  .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
+    opacity: 1; }
   .animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-page-next {
     width: 75px;
     background-size: 15px 9px;

@@ -30,11 +30,11 @@
 			
 			.pager {
 				font-size: 20px;
+				padding: 5px 0 5px 75px;
 				
 				&.active {
-					//padding: 40px 75px;
+					top: 0;
 					padding-left: 75px;
-					//border: 1px solid red;
 					.pager-cta {
 							
 					}

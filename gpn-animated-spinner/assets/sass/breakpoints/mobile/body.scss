@@ -107,7 +107,7 @@ $transition-speed: .5s;
 				margin: 0;
 				width: 100%;
 				text-align: left;
-				padding: 5px 0 5px 75px;
+				padding: 20px 100px 20px 50px;
 				border: 1px solid transparent;
 				opacity: 0;
 				transition: top $transition-speed ease, opacity $transition-speed ease;
@@ -123,11 +123,8 @@ $transition-speed: .5s;
 				}
 				
 				&.active {
-					top: 0;
+					//top: 0;
 					opacity: 1;
-					//padding: 20px 45px 20px 45px;
-					padding-left: 45px;
-					padding-right: 45px;
 					
 					.pager-cta {
 						position: absolute;

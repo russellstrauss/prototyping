@@ -82,7 +82,7 @@
   margin: 0;
   width: 100%;
   text-align: left;
-  padding: 5px 0 5px 75px;
+  padding: 20px 100px 20px 50px;
   border: 1px solid transparent;
   opacity: 0;
   transition: top 0.5s ease, opacity 0.5s ease; }
@@ -92,10 +92,7 @@
   border: 1px solid silver; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
-  top: 0;
-  opacity: 1;
-  padding-left: 45px;
-  padding-right: 45px; }
+  opacity: 1; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.active .pager-cta {
   position: absolute;
@@ -154,8 +151,10 @@
     height: auto;
     min-width: 700px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager {
-    font-size: 20px; }
+    font-size: 20px;
+    padding: 5px 0 5px 75px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
+    top: 0;
     padding-left: 75px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
     opacity: 1; }

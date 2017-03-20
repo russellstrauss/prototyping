@@ -72,11 +72,20 @@ var activePagers = [];
 	}
 	
 	var copyAndShiftPagerPrev = function(pager) {
-		pager.css({'top': parseInt(pager.css('top')) + pager.outerHeight()}).removeClass('active visible'); // fade out
-		console.log('old method');
-		var $queued = pager.clone().css({'top': 0 - pager.outerHeight()}).insertAfter(pager);
+		
+		if (window.innerWidth > 767) {
+			var fadeOutTo = parseInt(pager.css('top')) + pager.outerHeight();
+			var fadeInStart = 0 - pager.outerHeight();
+			var fadeInTo = 0;
+		}
+		else {
+			
+		}
+		
+		pager.css({'top': fadeOutTo}).removeClass('active visible'); // fade out
+		var $queued = pager.clone().css({'top': fadeInStart}).insertAfter(pager);
 		var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this property is accessed
-		$queued.addClass('active visible').css({'top': 0});
+		$queued.addClass('active visible').css({'top': fadeInTo});
 
 		pager.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
 			$(this).remove();
@@ -84,41 +93,79 @@ var activePagers = [];
 		return $queued; // set new pager in array since old one will fade out and be removed
 	}
 	var copyAndShiftPagerNext = function(pager, yPos) {
-		pager.css({'top': 0 - pager.outerHeight()}).removeClass('active visible'); // slide up and out of the visible range		
+		
+		if (window.innerWidth > 767) {
+			var fadeOutTo = 0 - pager.outerHeight();
+			var fadeInStart = yPos;
+		}
+		else {
+			
+		}
+		
+		pager.css({'top': fadeOutTo}).removeClass('active visible'); // slide up and out of the visible range		
 		pager.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
 			$(this).remove();
 		});
-		var $queued = pager.clone().css({'top': yPos}).insertAfter(pager);
-		$queued.css({'top': yPos - $queued.outerHeight()}).addClass('visible');
+		var $queued = pager.clone().css({'top': fadeInStart}).insertAfter(pager);
+		
+		if (window.innerWidth > 767) var fadeInTo = yPos - $queued.outerHeight();
+		else {
+			
+		}
+		
+		$queued.css({'top': fadeInTo}).addClass('visible');
 		return $queued;
 	}
 	
 	var copyAndShiftPagerInRangePrev = function(pagerFadeOut, pagerFadeIn) {
-		pagerFadeOut.css({'top': parseInt(pagerFadeOut.css('top')) + pagerFadeOut.outerHeight()}).removeClass('active visible'); // fade out
 		
-		var $queued = pagerFadeIn.clone().css({'top': 0 - pagerFadeIn.outerHeight()}).insertAfter(pagerFadeIn).removeClass('active visible');
+		if (window.innerWidth > 767) {
+			var fadeOutTo = parseInt(pagerFadeOut.css('top')) + pagerFadeOut.outerHeight();
+			var fadeInStart = 0 - pagerFadeIn.outerHeight();
+			var fadeInTo = 0;
+		}
+		else {
+			var fadeOutTo = parseInt(pagerFadeOut.css('top')) + pagerFadeOut.outerHeight();
+			var fadeInStart = 0 - pagerFadeIn.outerHeight();
+			var fadeInTo = 0;
+		}
+		
+		pagerFadeOut.css({'top': fadeOutTo}).removeClass('active visible'); // fade out
+		
+		var $queued = pagerFadeIn.clone().css({'top': fadeInStart}).insertAfter(pagerFadeIn).removeClass('active visible');
 		pagerFadeIn.hide();
-		$queued.addClass('active visible').css({'top': 0});
+		$queued.addClass('active visible').css({'top': fadeInTo});
 
 		$queued.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
 			$(this).remove();
-			pagerFadeIn.addClass('visible').removeAttr('style').css({'top': 0});
+			pagerFadeIn.addClass('visible').removeAttr('style').css({'top': fadeInTo});
 		});
 		return pagerFadeIn;
 	}
 
 	
 	var copyAndShiftPagerInRangeNext = function(pagerFadeOut, pagerFadeIn, yPos) {
-		var newTop = 0 - pagerFadeOut.outerHeight();
-		pagerFadeOut.css({'top': newTop});
+		
+		if (window.innerWidth > 767) {
+			var fadeOutTo = 0 - pagerFadeOut.outerHeight();
+			var fadeInStart = yPos;
+			var fadeInTo = yPos - pagerFadeIn.outerHeight();
+		}
+		else {
+			var fadeOutTo = 0 - pagerFadeOut.outerHeight();
+			var fadeInStart = yPos;
+			var fadeInTo = yPos - pagerFadeIn.outerHeight();
+		}
+		
+		pagerFadeOut.css({'top': fadeOutTo});
 		pagerFadeOut.removeClass('active visible').addClass('transitioning'); // slide up and out of the visible range		
 		pagerFadeOut.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
 			$(this).removeClass('transitioning');
 		});
 
-		var $queued = pagerFadeIn.clone().css({'top': yPos}).insertAfter(pagerFadeIn).removeClass('active visible');
+		var $queued = pagerFadeIn.clone().css({'top': fadeInStart}).insertAfter(pagerFadeIn).removeClass('active visible');
 		pagerFadeIn.hide();
-		$queued.addClass('visible').css({'top': yPos - $queued.outerHeight()});
+		$queued.addClass('visible').css({'top': fadeInTo});
 
 		$queued.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
 			pagerFadeIn.remove();

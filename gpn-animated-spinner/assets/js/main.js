@@ -167,26 +167,26 @@ function triggerWindowResize() {
 		return $queued;
 	}
 	
-	var windowSize = window.innerWidth;
+	var prevWindowSize = window.innerWidth;
 	var resetValuesForWindowResize = function() {
 		$('.spinner-pagination').find('.pager').removeAttr('style');
 	}
 	var swiperObject = null;
 	var initSpinner = debounce(function(){
-	//var initSpinner = function(){
-				
-		//var pagers = [];
-
-		if (windowSize < 767 && window.innerWidth > 767) { // if was mobile but is now tablet
-			resetValuesForWindowResize();
-			windowSize = window.innerWidth;
-		}
-		else if (windowSize > 767 && window.innerWidth < 767) {
-			resetValuesForWindowResize();
-			windowSize = window.innerWidth;
-		}
 		
 		var prevSlideIndex = 0;
+		var mobile = (window.innerWidth < 767);
+		var tabletOrAbove = (window.innerWidth > 767);
+
+		if (prevWindowSize < 767 && tabletOrAbove) { // if was mobile but is now tablet
+			resetValuesForWindowResize();
+			prevWindowSize = window.innerWidth;
+		}
+		else if (prevWindowSize > 767 && mobile) {
+			resetValuesForWindowResize();
+			prevWindowSize = window.innerWidth;
+		}
+		
 		var swiper = new Swiper('.swiper-container', {
 			pagination: '.spinner-pagination',
 			paginationClickable: true,
@@ -219,14 +219,18 @@ function triggerWindowResize() {
 					// loop through pagination
 					$.each(pagers, function(i){
 						
+						var firstPager = (i == 0);
+						
 						// Shift pager array to have the active ones always at the top
-						if (i == 0) {
+						if (firstPager) {
 							if (direction == "next") {
 								pagers.push(pagers.shift());
 							}
 							else if (direction == "prev") {
 								pagers.unshift(pagers.pop());
 							}
+							// pagers[0].addClass('active').animate({'margin': '25px 0'});
+							// $('.spinner-background').height(pagers[0].outerHeight() + parseInt(pagers[0].css('margin-top')) + parseInt(pagers[0].css('margin-bottom')));
 							pagers[0].addClass('active');
 							$('.spinner-background').height(pagers[0].outerHeight());
 						}
@@ -237,44 +241,40 @@ function triggerWindowResize() {
 							pagers[i].addClass('item-' + i);
 							
 							// Queue up location for previous item to slide in
-							if (i == 0 && direction == "prev") { 
-								if (window.innerWidth > 767) {
-									if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
-										pagers[i] = copyAndShiftPagerPrev(pagers[i]);
-									}
-									else { // If only showing a range of pagers and not all pagers
-										pagers[i] = copyAndShiftPagerInRangePrev(pagers[i + numberOfPagersShowing], pagers[i]);
-									}
+							if (firstPager && direction == "prev" && tabletOrAbove) { 
+								if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
+									pagers[i] = copyAndShiftPagerPrev(pagers[i]);
+								}
+								else { // If only showing a range of pagers and not all pagers
+									pagers[i] = copyAndShiftPagerInRangePrev(pagers[i + numberOfPagersShowing], pagers[i]);
 								}
 							}
-							else {
-								if (window.innerWidth > 767 && !pagers[i].attr('class').includes('transitioning')) {
-									pagers[i].addClass('visible');
-									pagers[i].css({'top': currentTop});
-								}
-								else if (window.innerWidth < 767) {
-									pagers[i].css({'bottom': 0});
-								}
+							else if (tabletOrAbove && !pagers[i].attr('class').includes('transitioning')) {
+								pagers[i].addClass('visible');
+								pagers[i].css({'top': currentTop});
 							}
+							else if (mobile) {
+								pagers[i].css({'bottom': 0});
+							}
+							//currentTop += pagers[i].outerHeight() + parseInt(pagers[i].css('margin-top')) + parseInt(pagers[i].css('margin-bottom')); // calculate each pager's position
 							currentTop += pagers[i].outerHeight(); // calculate each pager's position
-														
+							
+							// Set pager location (only one pager showing) on mobile
+							if (mobile && firstPager) {
+								pagers[i].css({'bottom': 0});
+							}
 						}
 						
-						// Set pager location (only one pager showing) on mobile
-						if (window.innerWidth < 767 && i == 0) {
-							pagers[i].css({'bottom': 0});
-						}
+						
 						
 						// Queue up location for next item to slide in
-						if (direction == "next" && i == numberOfPagersShowing - 1) {
+						if (direction == "next" && i == numberOfPagersShowing - 1 && tabletOrAbove) {
 
-							if (window.innerWidth > 767) {
-								if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
-									pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop);
-								}
-								else { // If only showing a range of 1-n pagers and not all pagers
-									pagers[i] = copyAndShiftPagerInRangeNext(pagers[total-1], pagers[i], currentTop);
-								}
+							if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
+								pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop);
+							}
+							else { // If only showing a range of 1-n pagers and not all pagers
+								pagers[i] = copyAndShiftPagerInRangeNext(pagers[total-1], pagers[i], currentTop);
 							}
 						}
 						

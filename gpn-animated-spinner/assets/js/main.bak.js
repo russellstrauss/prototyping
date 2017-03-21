@@ -203,7 +203,7 @@ function triggerWindowResize() {
 			
 			paginationCustomRender: function(swiper, current, total) {
 				
-				console.clear();
+				//console.clear();
 				
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
 					var numberOfPagersShowing = 4;
@@ -247,15 +247,9 @@ function triggerWindowResize() {
 									}
 								}
 							}
-							else {
-								if (window.innerWidth > 767 && !pagers[i].attr('class').includes('transitioning')) {
-									pagers[i].addClass('visible');
-									pagers[i].css({'top': currentTop});
-								}
-								else if (window.innerWidth < 767) {
-									//pagers[i].removeAttr('style');
-									pagers[i].css({'bottom': 0});
-								}
+							if (window.innerWidth > 767 && !pagers[i].attr('class').includes('transitioning')) { // set position for all pagers								
+								pagers[i].addClass('visible');
+								pagers[i].css({'top': currentTop});
 							}
 							currentTop += pagers[i].outerHeight(); // calculate each pager's position
 														

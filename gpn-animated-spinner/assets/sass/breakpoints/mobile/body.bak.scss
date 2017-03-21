@@ -1,0 +1,180 @@
+#test-prev {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100px;
+	width: 100px;
+	background-color: #fff;
+	z-index: 9999;
+	cursor: pointer;
+}
+#test-next {
+	position: absolute;
+	top: 150px;
+	left: 0;
+	height: 100px;
+	width: 100px;
+	background-color: #fff;
+	z-index: 9999;
+	cursor: pointer;
+}
+
+@mixin OpenSansLight {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 100;
+}
+@mixin OpenSansSemiBold {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 600;
+}
+@mixin OpenSansExtraBold {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 800;
+}
+
+
+.no-transition {
+	-webkit-transition: none !important;
+	-moz-transition: none !important;
+	-o-transition: none !important;
+	transition: none !important;
+}
+
+$base-z-index: 10;
+$base-mobile-padding: 15px;
+$transition-speed: 1s;
+
+.animated-spinner-hero {
+	width: 100vw;
+	height: 100vh;
+	
+	.swiper-wrapper {
+		.swiper-slide {
+			//background: black !important;
+			background-position: center center;
+			background-size: cover;
+			padding-left: 15px;
+			padding-right: 15px;
+			
+			.headline {
+				//display: none;
+				color: white;
+						
+				h2 {
+					@include OpenSansExtraBold;
+					font-size: 10vw;
+					margin-top: 0;
+					// page load {
+						//margin-left: -30px; // page load
+						//opacity: 0; // page load
+						//transition: opacity 1s ease, margin-left 1s ease;
+					//}
+				}
+				.description {
+					@include OpenSansLight;
+					font-size: 6vw;
+					line-height: 1.4;
+					// page load {
+						//opacity: 0;
+						//transition: opacity 1s ease;
+					//}
+				}
+			}
+		}
+	}
+	.spinner-container {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		//border: 1px solid red;
+		z-index: $base-z-index;
+		padding-right: $base-mobile-padding;
+		.spinner-pagination {
+			bottom: 0;
+			margin-bottom: 0;
+			padding-left: 0;
+			&.page-load-animation {
+				.pager {
+					transition: opacity 1s ease;
+				}
+			}
+			
+			.pager {
+				position: absolute;
+				@include OpenSansSemiBold;
+				font-size: 18px;
+				color: white;
+				margin: 0;
+				width: 100%;
+				text-align: left;
+				//padding: 20px 100px 20px 50px;
+				border: 1px solid transparent;
+				opacity: 0;
+				transition: top $transition-speed ease, opacity $transition-speed ease;//, padding $transition-speed ease;
+				//display: none;
+				border: 1px solid silver;
+				
+				// page load {
+					//opacity: 0;
+				//}
+				
+				&.visible {
+					opacity: 0;
+					//border: 1px solid silver;
+				}
+				
+				&.active {
+					opacity: 1;
+					
+					.pager-cta {
+						position: absolute;
+						height: 100%;
+						width: 40px;
+						top: 0;
+						right: 0;
+						//transform: translateY(-50%);
+						background: url(../img/pager-cta.png) no-repeat center right 10px;
+						background-size: 30px;
+						a {
+							
+						}	
+					}
+				}
+				&.queued {
+					opacity: 0;
+				}
+			}
+		}
+		.spinner-background {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			background-color: rgba(255, 255, 255, .3);
+			//background-color: rgba(128, 193, 52, .5); // green
+			transition: height $transition-speed ease;//, opacity 1s ease; // height is spinner animation opacity is pageload animation
+			// page load {
+				//transition: height $transition-speed ease, opacity 1s ease;
+				//opacity: 0;	
+			//}
+			.swiper-page-prev, .swiper-page-next {
+				position: absolute;
+				left: 0;
+				width: 40px;
+				height: 50%;
+				cursor: pointer;
+				background-size: 20px 12px;
+				background-repeat: no-repeat;
+				background-position: center center;
+				opacity: .75;
+			}
+			.swiper-page-prev {
+				top: 0;
+				background-image: url(../img/up-chevron.png);
+			}
+			.swiper-page-next {
+				bottom: 0;
+				background-image: url(../img/down-chevron.png);
+			}
+		}
+	}
+}

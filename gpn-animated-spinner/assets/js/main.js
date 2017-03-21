@@ -1,6 +1,9 @@
 // Bugs to fix
 // 1. When changing window size, pagers indexing is messed up and tons of duplicate nodes added.
 
+// 2. margins don't work when paging backwards
+// 3. spacing not correct on last visible pager
+
 var pagers = []; // define out here for testing. move farther down in scope later.
 var activePagers = [];
 
@@ -83,7 +86,9 @@ var activePagers = [];
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
 					var numberOfPagersShowing = 4;
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
-					var currentTop = 0;
+					var activeMargin = 25;
+					var pagerSpacing = 10;
+					var currentTop = activeMargin;
 					
 					var $allPagers = $('.spinner-pagination').find('.pager').removeClass('active');
 					$allPagers.removeClass(function (index, className) {
@@ -105,29 +110,37 @@ var activePagers = [];
 							else if (direction == "prev") {
 								pagers.unshift(pagers.pop());
 							}
-							// pagers[0].addClass('active').animate({'margin': '25px 0'});
-							// $('.spinner-background').height(pagers[0].outerHeight() + parseInt(pagers[0].css('margin-top')) + parseInt(pagers[0].css('margin-bottom')));
 							pagers[0].addClass('active');
-							$('.spinner-background').height(pagers[0].outerHeight());
+							
+							if (mobile) $('.spinner-background').height(pagers[0].outerHeight());
+							else $('.spinner-background').height(pagers[0].outerHeight() + activeMargin*2);
+						}
+						else {
+							pagers[i][0].style.removeProperty('margin');
 						}
 						
 						if (i < numberOfPagersShowing) {
 							
 							pagers[i].addClass('item-' + i);
 							
-							if (firstPager && direction == "prev" && tabletOrAbove) { 
+							if (direction == "prev" && firstPager && tabletOrAbove) { 
 								pagers[i] = copyAndShiftPagerPrev(pagers[i], pagers[i + numberOfPagersShowing], numberOfPagersShowing, total);
 							}
 							else if (tabletOrAbove && !pagers[i].attr('class').includes('transitioning')) {
+								
 								pagers[i].addClass('visible');
 								pagers[i].css({'top': currentTop});
+								
+								if (firstPager) {
+									currentTop += activeMargin;
+									currentTop += pagerSpacing;
+								}
+								else {
+									currentTop += pagerSpacing;
+								}
 							}
-							else if (mobile) {
-								pagers[i].css({'bottom': 0});
-							}
-							//currentTop += pagers[i].outerHeight() + parseInt(pagers[i].css('margin-top')) + parseInt(pagers[i].css('margin-bottom')); // calculate each pager's position
+
 							currentTop += pagers[i].outerHeight(); // calculate each pager's position
-							
 							
 							if (mobile && firstPager) { 
 								pagers[i].css({'bottom': 0}); // Set pager location on mobile

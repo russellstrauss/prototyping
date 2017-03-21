@@ -214,7 +214,7 @@ function triggerWindowResize() {
 						return (className.match (/item-[0-9]/g) || []).join(' '); // remove all classes in the form [item-*] where * is a number
 					});
 					
-					var currentTop = 0; // calculate position of each pager
+					var currentTop = 0; // calculate position of each pager in the loop
 					
 					// loop through pagination
 					$.each(pagers, function(i){
@@ -253,7 +253,6 @@ function triggerWindowResize() {
 									pagers[i].css({'top': currentTop});
 								}
 								else if (window.innerWidth < 767) {
-									//pagers[i].removeAttr('style');
 									pagers[i].css({'bottom': 0});
 								}
 							}
@@ -263,9 +262,7 @@ function triggerWindowResize() {
 						
 						// Set pager location (only one pager showing) on mobile
 						if (window.innerWidth < 767 && i == 0) {
-							//$allPagers.removeAttr('style');
 							pagers[i].css({'bottom': 0});
-							//$('.spinner-background').height(pagers[i].outerHeight());
 						}
 						
 						// Queue up location for next item to slide in

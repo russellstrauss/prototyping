@@ -82,8 +82,7 @@
   text-align: left;
   border: 1px solid transparent;
   opacity: 0;
-  transition: top 0.5s ease, opacity 0.5s ease;
-  border: 1px solid silver; }
+  transition: top 0.5s ease, opacity 0.5s ease; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
   opacity: 0; }
@@ -151,14 +150,14 @@
     min-width: 700px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager {
     font-size: 20px;
-    padding: 20px 0 20px 75px; }
+    padding: 0 50px 0 75px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
-    top: 0;
-    padding-left: 75px; }
+    top: 0; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
     opacity: 1; }
   .animated-spinner-hero .spinner-container .spinner-background {
-    top: 0; }
+    top: 0;
+    bottom: auto; }
   .animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-page-next {
     width: 75px;
     background-size: 15px 9px;

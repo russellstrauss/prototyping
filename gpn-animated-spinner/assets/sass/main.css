@@ -75,15 +75,15 @@
   position: absolute;
   font-family: 'Open Sans', sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 18px;
   color: white;
   margin: 0;
   width: 100%;
   text-align: left;
-  padding: 20px 100px 20px 50px;
   border: 1px solid transparent;
   opacity: 0;
-  transition: top 0.5s ease, opacity 0.5s ease; }
+  transition: top 0.5s ease, opacity 0.5s ease;
+  border: 1px solid silver; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
   opacity: 0; }
@@ -104,9 +104,11 @@
   opacity: 0; }
 
 .animated-spinner-hero .spinner-container .spinner-background {
-  position: relative;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   background-color: rgba(255, 255, 255, 0.3);
-  transition: height 0.5s ease, opacity 1s ease; }
+  transition: height 0.5s ease; }
 
 .animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-page-next {
   position: absolute;
@@ -149,12 +151,14 @@
     min-width: 700px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager {
     font-size: 20px;
-    padding: 5px 0 5px 75px; }
+    padding: 20px 0 20px 75px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
     top: 0;
     padding-left: 75px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
     opacity: 1; }
+  .animated-spinner-hero .spinner-container .spinner-background {
+    top: 0; }
   .animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-page-next {
     width: 75px;
     background-size: 15px 9px;

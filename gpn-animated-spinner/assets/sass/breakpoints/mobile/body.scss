@@ -102,16 +102,17 @@ $transition-speed: .5s;
 			.pager {
 				position: absolute;
 				@include OpenSansSemiBold;
-				font-size: 14px;
+				font-size: 18px;
 				color: white;
 				margin: 0;
 				width: 100%;
 				text-align: left;
-				padding: 20px 100px 20px 50px;
+				//padding: 20px 100px 20px 50px;
 				border: 1px solid transparent;
 				opacity: 0;
-				transition: top $transition-speed ease, opacity $transition-speed ease;
+				transition: top $transition-speed ease, opacity $transition-speed ease;//, padding $transition-speed ease;
 				//display: none;
+				border: 1px solid silver;
 				
 				// page load {
 					//opacity: 0;
@@ -123,7 +124,6 @@ $transition-speed: .5s;
 				}
 				
 				&.active {
-					//top: 0;
 					opacity: 1;
 					
 					.pager-cta {
@@ -146,9 +146,12 @@ $transition-speed: .5s;
 			}
 		}
 		.spinner-background {
-			position: relative;
+			position: absolute;
+			bottom: 0;
+			width: 100%;
 			background-color: rgba(255, 255, 255, .3);
-			transition: height $transition-speed ease, opacity 1s ease; // height is spinner animation opacity is pageload animation
+			//background-color: rgba(128, 193, 52, .5); // green
+			transition: height $transition-speed ease;//, opacity 1s ease; // height is spinner animation opacity is pageload animation
 			// page load {
 				//transition: height $transition-speed ease, opacity 1s ease;
 				//opacity: 0;	

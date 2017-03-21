@@ -30,7 +30,7 @@
 			
 			.pager {
 				font-size: 20px;
-				padding: 5px 0 5px 75px;
+				padding: 20px 0 20px 75px;
 				
 				&.active {
 					top: 0;
@@ -45,6 +45,7 @@
 			}
 		}
 		.spinner-background {
+			top: 0;
 			.swiper-page-prev, .swiper-page-next {
 				width: 75px;
 				background-size: 15px 9px;

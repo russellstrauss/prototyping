@@ -165,7 +165,7 @@ var activePagers = [];
 			mousewheelControl: true,
 			paginationType: 'custom',
 			speed: 500,
-			effect: 'fade',
+			//effect: 'fade',
 			parallax: true,
 			setWrapperSize: true,
 			loop: true,
@@ -241,7 +241,7 @@ var activePagers = [];
 								if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
 									pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop);
 								}
-								else { // If only showing a range of pagers and not all pagers
+								else { // If only showing a range of 1-n pagers and not all pagers
 									pagers[i] = copyAndShiftPagerInRangeNext(pagers[total-1], pagers[i], currentTop);
 								}
 							}

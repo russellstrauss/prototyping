@@ -50,14 +50,14 @@ $transition-speed: .5s;
 	
 	.swiper-wrapper {
 		.swiper-slide {
-			background: black !important;
+			//background: black !important;
 			background-position: center center;
 			background-size: cover;
 			padding-left: 15px;
 			padding-right: 15px;
 			
 			.headline {
-				display: none;
+				//display: none;
 				color: white;
 						
 				h2 {
@@ -119,7 +119,7 @@ $transition-speed: .5s;
 				
 				&.visible {
 					opacity: 0;
-					border: 1px solid silver;
+					//border: 1px solid silver;
 				}
 				
 				&.active {

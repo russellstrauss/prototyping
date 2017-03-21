@@ -36,14 +36,12 @@
   height: 100vh; }
 
 .animated-spinner-hero .swiper-wrapper .swiper-slide {
-  background: black !important;
   background-position: center center;
   background-size: cover;
   padding-left: 15px;
   padding-right: 15px; }
 
 .animated-spinner-hero .swiper-wrapper .swiper-slide .headline {
-  display: none;
   color: white; }
 
 .animated-spinner-hero .swiper-wrapper .swiper-slide .headline h2 {
@@ -88,8 +86,7 @@
   transition: top 0.5s ease, opacity 0.5s ease; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
-  opacity: 0;
-  border: 1px solid silver; }
+  opacity: 0; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
   opacity: 1; }

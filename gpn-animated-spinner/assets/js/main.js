@@ -92,80 +92,82 @@ function triggerWindowResize() {
 		return direction;
 	}
 	
-	var copyAndShiftPagerPrev = function(pager) {
+	var copyAndShiftPagerPrev = function(currentPager, pagerFadeOut, numberOfPagersShowing, total) {
 		
-		var fadeOutTo = parseInt(pager.css('top')) + pager.outerHeight();
-		var fadeInStart = 0 - pager.outerHeight();
-		var fadeInTo = 0;
-		
-		pager.css({'top': fadeOutTo}).removeClass('active visible'); // fade out
-		var $queued = pager.clone().css({'top': fadeInStart}).insertAfter(pager);
-		var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this property is accessed
-		$queued.addClass('active visible').css({'top': fadeInTo});
+		if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
+			var fadeOutTo = parseInt(currentPager.css('top')) + currentPager.outerHeight();
+			var fadeInStart = 0 - currentPager.outerHeight();
+			var fadeInTo = 0;
+			
+			currentPager.css({'top': fadeOutTo}).removeClass('active visible'); // fade out
+			var $queued = currentPager.clone().css({'top': fadeInStart}).insertAfter(currentPager);
+			var clearCSSCache = $queued.css('transition'); // For some reason transition won't show unless this property is accessed
+			$queued.addClass('active visible').css({'top': fadeInTo});
 
-		pager.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
-			$(this).remove();
-		});
-		return $queued; // set new pager in array since old one will fade out and be removed
+			currentPager.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+				$(this).remove();
+			});
+			return $queued; // set new pager in array since old one will fade out and be removed
+		}
+		else { // If only showing a range of pagers and not all pagers
+			var fadeOutTo = parseInt(pagerFadeOut.css('top')) + pagerFadeOut.outerHeight();
+			var fadeInStart = 0 - currentPager.outerHeight();
+			var fadeInTo = 0;
+			
+			pagerFadeOut.css({'top': fadeOutTo}).removeClass('active visible'); // fade out
+			
+			var $queued = currentPager.clone().css({'top': fadeInStart}).insertAfter(currentPager).removeClass('active visible');
+			currentPager.hide();
+			$queued.addClass('active visible').css({'top': fadeInTo});
+
+			$queued.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+				$(this).remove();
+				currentPager.addClass('visible').removeAttr('style').css({'top': fadeInTo});
+			});
+			return currentPager;
+		}
+		
+		
 	}
-	var copyAndShiftPagerNext = function(pager, yPos) {
+	var copyAndShiftPagerNext = function(currentPager, yPos, pagerFadeOut, numberOfPagersShowing, total) {
 		
-		var fadeOutTo = 0 - pager.outerHeight();
-		var fadeInStart = yPos;
-		
-		pager.css({'top': fadeOutTo}).removeClass('active visible'); // slide up and out of the visible range		
-		pager.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
-			$(this).remove();
-		});
-		var $queued = pager.clone().css({'top': fadeInStart}).insertAfter(pager);
-		
-		var fadeInTo = yPos - $queued.outerHeight();
-		
-		$queued.css({'top': fadeInTo}).addClass('visible');
-		return $queued;
+		if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
+			var fadeOutTo = 0 - currentPager.outerHeight();
+			var fadeInStart = yPos;
+			
+			currentPager.css({'top': fadeOutTo}).removeClass('active visible'); // slide up and out of the visible range		
+			currentPager.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+				$(this).remove();
+			});
+			var $queued = currentPager.clone().css({'top': fadeInStart}).insertAfter(currentPager);
+			
+			var fadeInTo = yPos - $queued.outerHeight();
+			
+			$queued.css({'top': fadeInTo}).addClass('visible');
+			return $queued;
+		}
+		else { // If only showing a range of 1-n pagers and not all pagers
+			var fadeOutTo = 0 - pagerFadeOut.outerHeight();
+			var fadeInStart = yPos;
+			var fadeInTo = yPos - currentPager.outerHeight();
+			
+			pagerFadeOut.css({'top': fadeOutTo});
+			pagerFadeOut.removeClass('active visible').addClass('transitioning'); // slide up and out of the visible range		
+			pagerFadeOut.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+				$(this).removeClass('transitioning');
+			});
+
+			var $queued = currentPager.clone().css({'top': fadeInStart}).insertAfter(currentPager).removeClass('active visible');
+			currentPager.hide();
+			$queued.addClass('visible').css({'top': fadeInTo});
+
+			$queued.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
+				currentPager.remove();
+			});
+			return $queued;
+		}
 	}
 	
-	var copyAndShiftPagerInRangePrev = function(pagerFadeOut, pagerFadeIn) {
-		
-		var fadeOutTo = parseInt(pagerFadeOut.css('top')) + pagerFadeOut.outerHeight();
-		var fadeInStart = 0 - pagerFadeIn.outerHeight();
-		var fadeInTo = 0;
-		
-		pagerFadeOut.css({'top': fadeOutTo}).removeClass('active visible'); // fade out
-		
-		var $queued = pagerFadeIn.clone().css({'top': fadeInStart}).insertAfter(pagerFadeIn).removeClass('active visible');
-		pagerFadeIn.hide();
-		$queued.addClass('active visible').css({'top': fadeInTo});
-
-		$queued.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
-			$(this).remove();
-			pagerFadeIn.addClass('visible').removeAttr('style').css({'top': fadeInTo});
-		});
-		return pagerFadeIn;
-	}
-
-	
-	var copyAndShiftPagerInRangeNext = function(pagerFadeOut, pagerFadeIn, yPos) {
-		
-		var fadeOutTo = 0 - pagerFadeOut.outerHeight();
-		var fadeInStart = yPos;
-		var fadeInTo = yPos - pagerFadeIn.outerHeight();
-		
-		pagerFadeOut.css({'top': fadeOutTo});
-		pagerFadeOut.removeClass('active visible').addClass('transitioning'); // slide up and out of the visible range		
-		pagerFadeOut.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
-			$(this).removeClass('transitioning');
-		});
-
-		var $queued = pagerFadeIn.clone().css({'top': fadeInStart}).insertAfter(pagerFadeIn).removeClass('active visible');
-		pagerFadeIn.hide();
-		$queued.addClass('visible').css({'top': fadeInTo});
-
-		$queued.on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd', function(){ // remove element after transition ends
-			pagerFadeIn.remove();
-		});
-		return $queued;
-	}
 	
 	var prevWindowSize = window.innerWidth;
 	var resetValuesForWindowResize = function() {
@@ -206,7 +208,7 @@ function triggerWindowResize() {
 				console.clear();
 				
 				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
-					var numberOfPagersShowing = 4;
+					var numberOfPagersShowing = 7;
 					var direction = calculateSlideDirection(prevSlideIndex, current, total);
 					
 					var $allPagers = $('.spinner-pagination').find('.pager').removeClass('active');
@@ -242,12 +244,7 @@ function triggerWindowResize() {
 							
 							// Queue up location for previous item to slide in
 							if (firstPager && direction == "prev" && tabletOrAbove) { 
-								if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
-									pagers[i] = copyAndShiftPagerPrev(pagers[i]);
-								}
-								else { // If only showing a range of pagers and not all pagers
-									pagers[i] = copyAndShiftPagerInRangePrev(pagers[i + numberOfPagersShowing], pagers[i]);
-								}
+								pagers[i] = copyAndShiftPagerPrev(pagers[i], pagers[i + numberOfPagersShowing], numberOfPagersShowing, total);
 							}
 							else if (tabletOrAbove && !pagers[i].attr('class').includes('transitioning')) {
 								pagers[i].addClass('visible');
@@ -265,17 +262,9 @@ function triggerWindowResize() {
 							}
 						}
 						
-						
-						
-						// Queue up location for next item to slide in
+						// Queue up location and slide in next item
 						if (direction == "next" && i == numberOfPagersShowing - 1 && tabletOrAbove) {
-
-							if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
-								pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop);
-							}
-							else { // If only showing a range of 1-n pagers and not all pagers
-								pagers[i] = copyAndShiftPagerInRangeNext(pagers[total-1], pagers[i], currentTop);
-							}
+							pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop, pagers[total-1], numberOfPagersShowing, total);
 						}
 						
 					});

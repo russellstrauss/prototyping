@@ -1,0 +1,19 @@
+/* Imports */
+/* breakpoints */
+.clearfix {
+  float: none;
+  clear: both; }
+
+/* MOBILE FIRST! */
+body {
+  background: #ccc; }
+
+.swiper-container {
+  height: 300px;
+  margin: 20px auto; }
+
+.swiper-container .swiper-slide {
+  background: #fff; }
+
+/* breakpoints */
+/* breakpoints */

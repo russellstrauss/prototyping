@@ -52,6 +52,8 @@ var activePagers = [];
 	var swiperObject = null;
 	var initSpinner = debounce(function(){
 		
+		//debugger;
+
 		var prevSlideIndex = 0;
 		var mobile = (window.innerWidth < 767);
 		var tabletOrAbove = (window.innerWidth > 767);

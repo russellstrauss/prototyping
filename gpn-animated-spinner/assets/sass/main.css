@@ -152,7 +152,7 @@
     font-size: 20px;
     padding: 0 50px 0 75px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
-    top: 0; }
+    top: 25px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
     opacity: 1; }
   .animated-spinner-hero .spinner-container .spinner-background {

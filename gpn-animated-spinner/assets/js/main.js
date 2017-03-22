@@ -1,8 +1,7 @@
 // Bugs to fix
 // 1. When changing window size, pagers indexing is messed up and tons of duplicate nodes added.
 
-// 2. margins don't work when paging backwards
-// 3. spacing not correct on last visible pager
+// 2. Back button doesnt work on mobile
 
 var pagers = []; // define out here for testing. move farther down in scope later.
 var activePagers = [];
@@ -99,15 +98,17 @@ var activePagers = [];
 					
 					// loop through pagination
 					$.each(pagers, function(i){
-						
+
 						var firstPager = (i == 0);
-						
-						
+												
 						if (firstPager) { // Shift pager array to have the active ones always in first index
 							if (direction == "next") {
 								pagers.push(pagers.shift());
 							}
 							else if (direction == "prev") {
+								pagers[total-1].css({'top': activeMargin});
+								currentTop += activeMargin + pagerSpacing;
+								
 								pagers.unshift(pagers.pop());
 							}
 							pagers[0].addClass('active');
@@ -124,7 +125,7 @@ var activePagers = [];
 							pagers[i].addClass('item-' + i);
 							
 							if (direction == "prev" && firstPager && tabletOrAbove) { 
-								pagers[i] = copyAndShiftPagerPrev(pagers[i], pagers[i + numberOfPagersShowing], numberOfPagersShowing, total);
+								pagers[i] = copyAndShiftPagerPrev(pagers[i], pagers[i + numberOfPagersShowing], numberOfPagersShowing, total, activeMargin);
 							}
 							else if (tabletOrAbove && !pagers[i].attr('class').includes('transitioning')) {
 								
@@ -135,7 +136,7 @@ var activePagers = [];
 									currentTop += activeMargin;
 									currentTop += pagerSpacing;
 								}
-								else {
+								else if (i != numberOfPagersShowing - 1) {
 									currentTop += pagerSpacing;
 								}
 							}
@@ -293,12 +294,12 @@ var calculateSlideDirection = function(prevIndex, currentIndex, total) {
 	return direction;
 }
 
-var copyAndShiftPagerPrev = function(currentPager, pagerFadeOut, numberOfPagersShowing, total) {
+var copyAndShiftPagerPrev = function(currentPager, pagerFadeOut, numberOfPagersShowing, total, activeMargin) {
 	
 	if (total == numberOfPagersShowing) { // If showing all pagers, for example showing 4 pagers at a time and there are only a total of 4 slides
 		var fadeOutTo = parseInt(currentPager.css('top')) + currentPager.outerHeight();
 		var fadeInStart = 0 - currentPager.outerHeight();
-		var fadeInTo = 0;
+		var fadeInTo = 0 + activeMargin;
 		
 		currentPager.css({'top': fadeOutTo}).removeClass('active visible'); // fade out
 		var $queued = currentPager.clone().css({'top': fadeInStart}).insertAfter(currentPager);
@@ -313,7 +314,7 @@ var copyAndShiftPagerPrev = function(currentPager, pagerFadeOut, numberOfPagersS
 	else { // If only showing a range of pagers and not all pagers
 		var fadeOutTo = parseInt(pagerFadeOut.css('top')) + pagerFadeOut.outerHeight();
 		var fadeInStart = 0 - currentPager.outerHeight();
-		var fadeInTo = 0;
+		var fadeInTo = 0 + activeMargin;
 		
 		pagerFadeOut.css({'top': fadeOutTo}).removeClass('active visible'); // fade out
 		
@@ -327,8 +328,6 @@ var copyAndShiftPagerPrev = function(currentPager, pagerFadeOut, numberOfPagersS
 		});
 		return currentPager;
 	}
-	
-	
 }
 var copyAndShiftPagerNext = function(currentPager, yPos, pagerFadeOut, numberOfPagersShowing, total) {
 	

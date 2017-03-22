@@ -7,3 +7,5 @@ Attribution — You must give appropriate credit, provide a link to the license,
 Non-Commercial — You may not use the material for commercial purposes.
 
 ShareAlike — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+
+If a specific subdirectory contains a license file, that license takes precedence over this one. All subdirectories that do not contain their own more-specific license files fallback to this this Creative Commons license file.

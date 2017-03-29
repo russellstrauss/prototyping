@@ -43,18 +43,126 @@ var activePagers = [];
 	}
 	
 
-	
+	var renderPagersTablet =  function(swiper, current, total) {
+		console.clear();
+			
+		if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
+			var numberOfPagersShowing = 4;
+			var direction = calculateSlideDirection(prevSlideIndex, current, total);
+			var activeMargin = 25;
+			var pagerSpacing = 10;
+			var currentTop = activeMargin;
+			
+			var mobile = (window.innerWidth < 767);
+			var tabletOrAbove = (window.innerWidth > 767);
+			
+			var $allPagers = $('.spinner-pagination').find('.pager').removeClass('active');
+			$allPagers.removeClass(function (index, className) {
+				return (className.match (/item-[0-9]/g) || []).join(' '); // remove all classes in the form [item-*] where * is a number
+			});
+			
+			
+			// loop through pagination
+			$.each(pagers, function(i){
+
+				var firstPager = (i == 0);
+										
+				if (firstPager) { // Shift pager array to have the active ones always in first index
+					if (direction == "next") {
+						pagers.push(pagers.shift());
+					}
+					else if (direction == "prev") {
+						pagers[total-1].css({'top': activeMargin});
+						currentTop += activeMargin + pagerSpacing;
+						
+						pagers.unshift(pagers.pop());
+					}
+					pagers[0].addClass('active');
+					
+					if (mobile) $('.spinner-background').height(pagers[0].outerHeight());
+					else $('.spinner-background').height(pagers[0].outerHeight() + activeMargin*2);
+				}
+				else {
+					pagers[i][0].style.removeProperty('margin');
+				}
+				
+				if (i < numberOfPagersShowing) {
+					
+					pagers[i].addClass('item-' + i);
+					
+					if (direction == "prev" && firstPager && tabletOrAbove) { 
+						pagers[i] = copyAndShiftPagerPrev(pagers[i], pagers[i + numberOfPagersShowing], numberOfPagersShowing, total, activeMargin);
+					}
+					else if (tabletOrAbove && !pagers[i].attr('class').includes('transitioning')) {
+						
+						pagers[i].addClass('visible');
+						pagers[i].css({'top': currentTop});
+						
+						if (firstPager) {
+							currentTop += activeMargin;
+							currentTop += pagerSpacing;
+						}
+						else if (i != numberOfPagersShowing - 1) {
+							currentTop += pagerSpacing;
+						}
+					}
+
+					currentTop += pagers[i].outerHeight(); // calculate each pager's position
+					
+					if (mobile && firstPager) { 
+						pagers[i].css({'bottom': 0}); // Set pager location on mobile
+					}
+				}
+				
+				if (direction == "next" && i == numberOfPagersShowing - 1 && tabletOrAbove) {
+					pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop, pagers[total-1], numberOfPagersShowing, total);
+				}
+				
+			});
+			
+			$('.spinner-pagination').height(currentTop);
+			
+			prevSlideIndex = current; // used to compute direction change
+		}
+	}
+
+	var renderPagersMobile =  function(swiper, current, total) {
+		console.log("paginationCustomRender mobile, i: " + current);
+	}
 
 	var prevWindowSize = window.innerWidth;
 	var resetValuesForWindowResize = function() {
 		$('.spinner-pagination').find('.pager').removeAttr('style');
 	}
 	var swiperObject = null;
+	
+	var config = {
+		pagination: '.spinner-pagination',
+		paginationClickable: true,
+		direction: 'vertical',
+		mousewheelControl: true,
+		paginationType: 'custom',
+		speed: 500, // match $transition-speed in CSS
+		loop: true,
+		prevButton: '.swiper-page-prev',
+		nextButton: '.swiper-page-next',
+		breakpoints: {
+			768: { // mobile config
+				paginationType: 'custom',
+				paginationCustomRender: renderPagersMobile
+			},
+			9999: { // tablet and above
+				paginationType: 'custom',
+				paginationCustomRender: renderPagersTablet
+			}
+		}
+	}
+	
+	var prevSlideIndex = 0;
+	
 	var initSpinner = debounce(function(){
 		
-		//debugger;
-
-		var prevSlideIndex = 0;
+		
 		var mobile = (window.innerWidth < 767);
 		var tabletOrAbove = (window.innerWidth > 767);
 
@@ -67,101 +175,7 @@ var activePagers = [];
 			prevWindowSize = window.innerWidth;
 		}
 		
-		var swiper = new Swiper('.swiper-container', {
-			pagination: '.spinner-pagination',
-			paginationClickable: true,
-			direction: 'vertical',
-			mousewheelControl: true,
-			paginationType: 'custom',
-			speed: 500,
-			//parallax: true,
-			//setWrapperSize: true,
-			loop: true,
-			prevButton: '.swiper-page-prev',
-			nextButton: '.swiper-page-next',
-			
-			paginationCustomRender: function(swiper, current, total) {
-				
-				console.clear();
-				
-				if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
-					var numberOfPagersShowing = 4;
-					var direction = calculateSlideDirection(prevSlideIndex, current, total);
-					var activeMargin = 25;
-					var pagerSpacing = 10;
-					var currentTop = activeMargin;
-					
-					var $allPagers = $('.spinner-pagination').find('.pager').removeClass('active');
-					$allPagers.removeClass(function (index, className) {
-						return (className.match (/item-[0-9]/g) || []).join(' '); // remove all classes in the form [item-*] where * is a number
-					});
-					
-					
-					
-					// loop through pagination
-					$.each(pagers, function(i){
-
-						var firstPager = (i == 0);
-												
-						if (firstPager) { // Shift pager array to have the active ones always in first index
-							if (direction == "next") {
-								pagers.push(pagers.shift());
-							}
-							else if (direction == "prev") {
-								pagers[total-1].css({'top': activeMargin});
-								currentTop += activeMargin + pagerSpacing;
-								
-								pagers.unshift(pagers.pop());
-							}
-							pagers[0].addClass('active');
-							
-							if (mobile) $('.spinner-background').height(pagers[0].outerHeight());
-							else $('.spinner-background').height(pagers[0].outerHeight() + activeMargin*2);
-						}
-						else {
-							pagers[i][0].style.removeProperty('margin');
-						}
-						
-						if (i < numberOfPagersShowing) {
-							
-							pagers[i].addClass('item-' + i);
-							
-							if (direction == "prev" && firstPager && tabletOrAbove) { 
-								pagers[i] = copyAndShiftPagerPrev(pagers[i], pagers[i + numberOfPagersShowing], numberOfPagersShowing, total, activeMargin);
-							}
-							else if (tabletOrAbove && !pagers[i].attr('class').includes('transitioning')) {
-								
-								pagers[i].addClass('visible');
-								pagers[i].css({'top': currentTop});
-								
-								if (firstPager) {
-									currentTop += activeMargin;
-									currentTop += pagerSpacing;
-								}
-								else if (i != numberOfPagersShowing - 1) {
-									currentTop += pagerSpacing;
-								}
-							}
-
-							currentTop += pagers[i].outerHeight(); // calculate each pager's position
-							
-							if (mobile && firstPager) { 
-								pagers[i].css({'bottom': 0}); // Set pager location on mobile
-							}
-						}
-						
-						if (direction == "next" && i == numberOfPagersShowing - 1 && tabletOrAbove) {
-							pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop, pagers[total-1], numberOfPagersShowing, total);
-						}
-						
-					});
-					
-					$('.spinner-pagination').height(currentTop);
-					
-					prevSlideIndex = current; // used to compute direction change
-				}
-			}
-		});
+		var swiper = new Swiper('.swiper-container', config);
 		swiperObject = swiper; // wannabe return statement to allow debounce
 		return swiper;
 	//}

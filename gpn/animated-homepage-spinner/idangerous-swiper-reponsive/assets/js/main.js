@@ -1,6 +1,5 @@
 (function(){
-
-
+	
 	var renderPagersTablet =  function(swiper, current, total) {
 		console.log("paginationCustomRender tablet, i: " + current);
 	}
@@ -9,19 +8,7 @@
 		console.log("paginationCustomRender mobile, i: " + current);
 	}
 
-	var mobileConfig = {
-		pagination: '.swiper-pagination',
-		initialSlide: 0,
-		mousewheelControl: true,
-		slidesPerView: 3,
-		centeredSlides: false,
-		paginationClickable: true,
-		spaceBetween: 0,
-		paginationType: 'custom',
-		paginationCustomRender: renderPagersMobile
-	}
-
-	var tabletConfig = {
+	var config = {
 		pagination: '.swiper-pagination',
 		initialSlide: 0,
 		mousewheelControl: true,
@@ -29,28 +16,36 @@
 		centeredSlides: false,
 		paginationClickable: true,
 		spaceBetween: 30,
-		paginationType: 'custom',
-		paginationCustomRender: renderPagersTablet
+		breakpoints: {
+			768: { // mobile config
+				paginationType: 'custom',
+				paginationCustomRender: renderPagersMobile
+			},
+			9999: {
+				paginationType: 'custom',
+				paginationCustomRender: renderPagersTablet
+			}
+		}
 	}
 
 
-
+	
 	var initSwiper = function() {
-
-		if (window.innerWidth < 767) {
-			var config = mobileConfig;
-		}
-		else {
-			var config = tabletConfig;
-		}
 
 		var swiper = new Swiper('.swiper-container', config);
 		return swiper;
 	}
 	
-	initSwiper();
-	$( window ).resize(function() {
-		initSwiper();
-	});
+	var swiper = initSwiper();
+	// $(window).resize(function() {
+	// 	swiper = initSwiper();
+	// });
+
+	
+	var resetValuesForWindowResize = function() {
+		// debugger;
+		// swiper.destroy();
+		// swiper = initSwiper();
+	}
 
 })();

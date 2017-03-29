@@ -1,24 +1,3 @@
-#test-prev {
-	position: absolute;
-	top: 0;
-	left: 0;
-	height: 100px;
-	width: 100px;
-	background-color: #fff;
-	z-index: 9999;
-	cursor: pointer;
-}
-#test-next {
-	position: absolute;
-	top: 150px;
-	left: 0;
-	height: 100px;
-	width: 100px;
-	background-color: #fff;
-	z-index: 9999;
-	cursor: pointer;
-}
-
 @mixin OpenSansLight {
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 100;
@@ -32,14 +11,6 @@
 	font-weight: 800;
 }
 
-
-.no-transition {
-	-webkit-transition: none !important;
-	-moz-transition: none !important;
-	-o-transition: none !important;
-	transition: none !important;
-}
-
 $base-z-index: 10;
 $base-mobile-padding: 15px;
 $transition-speed: .5s;
@@ -50,14 +21,12 @@ $transition-speed: .5s;
 	
 	.swiper-wrapper {
 		.swiper-slide {
-			//background: black !important;
 			background-position: center center;
 			background-size: cover;
 			padding-left: 15px;
 			padding-right: 15px;
 			
 			.headline {
-				//display: none;
 				color: white;
 						
 				h2 {
@@ -86,9 +55,11 @@ $transition-speed: .5s;
 		position: absolute;
 		bottom: 0;
 		width: 100%;
-		//border: 1px solid red;
 		z-index: $base-z-index;
 		padding-right: $base-mobile-padding;
+		
+		$pager-control-width: 75px;
+
 		.spinner-pagination {
 			bottom: 0;
 			margin-bottom: 0;
@@ -98,7 +69,7 @@ $transition-speed: .5s;
 					transition: opacity 1s ease;
 				}
 			}
-			
+
 			.pager {
 				position: absolute;
 				@include OpenSansSemiBold;
@@ -110,8 +81,7 @@ $transition-speed: .5s;
 				border: 1px solid transparent;
 				opacity: 0;
 				transition: top $transition-speed ease, opacity $transition-speed ease;//, padding $transition-speed ease;
-				padding: 30px 100px 30px 50px;
-				//background-color: rgba(255, 255, 255, .25);
+				padding: 40px 100px 40px $pager-control-width;
 				bottom: 0;
 				// page load {
 					//opacity: 0;
@@ -119,41 +89,10 @@ $transition-speed: .5s;
 				
 				&.visible {
 					opacity: 0;
-					//border: 1px solid silver;
 				}
 				
 				&.active {
 					opacity: 1;
-					//bottom: 0;
-					
-					.swiper-controls {
-						position: absolute;
-						width: 40px;
-						height: 100%;
-						top: 0;
-						left: 0;
-						.swiper-page-prev, .swiper-page-next {
-							position: absolute;
-							left: 0;
-							width: 100%;
-							height: 50%;
-							cursor: pointer;
-							background-size: 20px 12px;
-							background-repeat: no-repeat;
-							background-position: center center;
-							opacity: .75;
-						}
-						.swiper-page-prev {
-							position: absolute;
-							top: 0;
-							background-image: url(../img/up-chevron.png);
-						}
-						.swiper-page-next {
-							position: absolute;
-							bottom: 0;
-							background-image: url(../img/down-chevron.png);
-						}
-					}
 
 					.pager-cta {
 						display: none;	
@@ -176,20 +115,27 @@ $transition-speed: .5s;
 			//}
 			.swiper-controls {
 				position: absolute;
-				width: 40px;
+				width: $pager-control-width;
 				height: 100%;
 				top: 0;
 				left: 0;
 				z-index: 9999;
-				.swiper-page-prev, .swiper-page-next {
+				.swiper-control {
 					position: absolute;
 					left: 0;
-					width: 40px;
+					width: 100%;
 					height: 50%;
 					cursor: pointer;
-					background-size: 20px 12px;
+					background-size: 30px 18px;
 					background-repeat: no-repeat;
 					background-position: center center;
+					opacity: .75;
+					transition: background-size 100ms ease-in-out, opacity 100ms ease-in-out;
+					
+					&:active {
+						opacity: 1;
+						background-size: 34px 20px;
+					}
 				}
 				.swiper-page-prev {
 					top: 0;

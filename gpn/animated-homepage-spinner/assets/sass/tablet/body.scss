@@ -37,14 +37,6 @@
 				&.active {
 					top: 25px; // match value activeMargin in JS to avoid transition on page load
 					bottom: auto;
-
-					.swiper-controls {
-
-					}
-
-					.pager-cta {
-							
-					}
 				}
 				&.visible {
 					opacity: 1;
@@ -56,7 +48,8 @@
 			bottom: auto;
 			
 			.swiper-controls {
-				.swiper-page-prev, .swiper-page-next {
+				.swiper-control {
+					background-size: 20px 12px;
 					opacity: .5;
 					transition: opacity $transition-speed ease;
 

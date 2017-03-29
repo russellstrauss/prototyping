@@ -5,32 +5,6 @@
   clear: both; }
 
 /* MOBILE FIRST! */
-#test-prev {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100px;
-  width: 100px;
-  background-color: #fff;
-  z-index: 9999;
-  cursor: pointer; }
-
-#test-next {
-  position: absolute;
-  top: 150px;
-  left: 0;
-  height: 100px;
-  width: 100px;
-  background-color: #fff;
-  z-index: 9999;
-  cursor: pointer; }
-
-.no-transition {
-  -webkit-transition: none !important;
-  -moz-transition: none !important;
-  -o-transition: none !important;
-  transition: none !important; }
-
 .animated-spinner-hero {
   width: 100vw;
   height: 100vh; }
@@ -83,7 +57,7 @@
   border: 1px solid transparent;
   opacity: 0;
   transition: top 0.5s ease, opacity 0.5s ease;
-  padding: 30px 100px 30px 50px;
+  padding: 40px 100px 40px 75px;
   bottom: 0; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
@@ -91,34 +65,6 @@
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
   opacity: 1; }
-
-.animated-spinner-hero .spinner-container .spinner-pagination .pager.active .swiper-controls {
-  position: absolute;
-  width: 40px;
-  height: 100%;
-  top: 0;
-  left: 0; }
-
-.animated-spinner-hero .spinner-container .spinner-pagination .pager.active .swiper-controls .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-pagination .pager.active .swiper-controls .swiper-page-next {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  cursor: pointer;
-  background-size: 20px 12px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  opacity: .75; }
-
-.animated-spinner-hero .spinner-container .spinner-pagination .pager.active .swiper-controls .swiper-page-prev {
-  position: absolute;
-  top: 0;
-  background-image: url(../img/up-chevron.png); }
-
-.animated-spinner-hero .spinner-container .spinner-pagination .pager.active .swiper-controls .swiper-page-next {
-  position: absolute;
-  bottom: 0;
-  background-image: url(../img/down-chevron.png); }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.active .pager-cta {
   display: none; }
@@ -135,21 +81,27 @@
 
 .animated-spinner-hero .spinner-container .spinner-background .swiper-controls {
   position: absolute;
-  width: 40px;
+  width: 75px;
   height: 100%;
   top: 0;
   left: 0;
   z-index: 9999; }
 
-.animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-next {
+.animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-control {
   position: absolute;
   left: 0;
-  width: 40px;
+  width: 100%;
   height: 50%;
   cursor: pointer;
-  background-size: 20px 12px;
+  background-size: 30px 18px;
   background-repeat: no-repeat;
-  background-position: center center; }
+  background-position: center center;
+  opacity: .75;
+  transition: background-size 100ms ease-in-out, opacity 100ms ease-in-out; }
+
+.animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-control:active {
+  opacity: 1;
+  background-size: 34px 20px; }
 
 .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-prev {
   top: 0;
@@ -208,10 +160,11 @@
   .animated-spinner-hero .spinner-container .spinner-background {
     top: 0;
     bottom: auto; }
-  .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-next {
+  .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-control {
+    background-size: 20px 12px;
     opacity: .5;
     transition: opacity 0.5s ease; }
-  .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-prev:hover, .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-next:hover {
+  .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-control:hover {
     opacity: 1; }
   .animated-spinner-hero .spinner-container .spinner-background .pager-cta {
     opacity: .5;

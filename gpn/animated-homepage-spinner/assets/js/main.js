@@ -150,7 +150,6 @@ var activePagers = [];
 			});
 			prevSlideIndex = current; // used to compute direction change
 		}
-
 	}
 
 	var prevWindowSize = window.innerWidth;
@@ -184,6 +183,8 @@ var activePagers = [];
 	
 	var initSpinner = debounce(function(){
 		
+		// ensure component height is correct
+		 $('.animated-spinner-hero').height($(window).outerHeight());
 		
 		var mobile = (window.innerWidth < 767);
 		var tabletOrAbove = (window.innerWidth > 767);

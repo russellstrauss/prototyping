@@ -82,7 +82,9 @@
   text-align: left;
   border: 1px solid transparent;
   opacity: 0;
-  transition: top 0.5s ease, opacity 0.5s ease; }
+  transition: top 0.5s ease, opacity 0.5s ease;
+  padding: 30px 100px 30px 50px;
+  bottom: 0; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
   opacity: 0; }
@@ -90,14 +92,36 @@
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
   opacity: 1; }
 
-.animated-spinner-hero .spinner-container .spinner-pagination .pager.active .pager-cta {
+.animated-spinner-hero .spinner-container .spinner-pagination .pager.active .swiper-controls {
   position: absolute;
-  height: 100%;
   width: 40px;
+  height: 100%;
   top: 0;
-  right: 0;
-  background: url(../img/pager-cta.png) no-repeat center right 10px;
-  background-size: 30px; }
+  left: 0; }
+
+.animated-spinner-hero .spinner-container .spinner-pagination .pager.active .swiper-controls .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-pagination .pager.active .swiper-controls .swiper-page-next {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  cursor: pointer;
+  background-size: 20px 12px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  opacity: .75; }
+
+.animated-spinner-hero .spinner-container .spinner-pagination .pager.active .swiper-controls .swiper-page-prev {
+  position: absolute;
+  top: 0;
+  background-image: url(../img/up-chevron.png); }
+
+.animated-spinner-hero .spinner-container .spinner-pagination .pager.active .swiper-controls .swiper-page-next {
+  position: absolute;
+  bottom: 0;
+  background-image: url(../img/down-chevron.png); }
+
+.animated-spinner-hero .spinner-container .spinner-pagination .pager.active .pager-cta {
+  display: none; }
 
 .animated-spinner-hero .spinner-container .spinner-pagination .pager.queued {
   opacity: 0; }
@@ -109,7 +133,15 @@
   background-color: rgba(255, 255, 255, 0.3);
   transition: height 0.5s ease; }
 
-.animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-page-next {
+.animated-spinner-hero .spinner-container .spinner-background .swiper-controls {
+  position: absolute;
+  width: 40px;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 9999; }
+
+.animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-next {
   position: absolute;
   left: 0;
   width: 40px;
@@ -117,18 +149,33 @@
   cursor: pointer;
   background-size: 20px 12px;
   background-repeat: no-repeat;
-  background-position: center center;
-  opacity: .75; }
+  background-position: center center; }
 
-.animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev {
+.animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-prev {
   top: 0;
   background-image: url(../img/up-chevron.png); }
 
-.animated-spinner-hero .spinner-container .spinner-background .swiper-page-next {
+.animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-next {
   bottom: 0;
   background-image: url(../img/down-chevron.png); }
 
-/* breakpoints */
+.animated-spinner-hero .spinner-container .spinner-background .pager-cta {
+  opacity: 1;
+  position: absolute;
+  z-index: 9999;
+  height: 100%;
+  width: 60px;
+  top: 0;
+  right: 0;
+  background: url(../img/pager-cta.png) no-repeat center center;
+  background-size: 30px; }
+
+.animated-spinner-hero .spinner-container .spinner-background .pager-cta a {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  cursor: pointer; }
+
 @media (min-width: 768px) {
   .animated-spinner-hero .swiper-wrapper .swiper-slide .headline {
     margin-top: 30vh;
@@ -150,24 +197,24 @@
     min-width: 700px; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager {
     font-size: 20px;
-    padding: 0 50px 0 75px; }
+    padding: 0 50px 0 75px;
+    background: none;
+    bottom: auto; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
-    top: 25px; }
+    top: 25px;
+    bottom: auto; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.visible {
     opacity: 1; }
   .animated-spinner-hero .spinner-container .spinner-background {
     top: 0;
     bottom: auto; }
-  .animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-page-next {
-    width: 75px;
-    background-size: 15px 9px;
+  .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-prev, .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-next {
     opacity: .5;
-    transition: opacity .5s ease; }
-  .animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev:hover, .animated-spinner-hero .spinner-container .spinner-background .swiper-page-next:hover {
+    transition: opacity 0.5s ease; }
+  .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-prev:hover, .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-page-next:hover {
     opacity: 1; }
-  .animated-spinner-hero .spinner-container .spinner-background .swiper-page-prev {
-    background-position: center bottom 15px; }
-  .animated-spinner-hero .spinner-container .spinner-background .swiper-page-next {
-    background-position: center top 15px; } }
-
-/* breakpoints */
+  .animated-spinner-hero .spinner-container .spinner-background .pager-cta {
+    opacity: .5;
+    transition: opacity 0.5s ease; }
+  .animated-spinner-hero .spinner-container .spinner-background .pager-cta:hover {
+    opacity: 1; } }

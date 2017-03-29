@@ -52,10 +52,7 @@ var activePagers = [];
 			var activeMargin = 25;
 			var pagerSpacing = 10;
 			var currentTop = activeMargin;
-			
-			var mobile = (window.innerWidth < 767);
-			var tabletOrAbove = (window.innerWidth > 767);
-			
+						
 			var $allPagers = $('.spinner-pagination').find('.pager').removeClass('active');
 			$allPagers.removeClass(function (index, className) {
 				return (className.match (/item-[0-9]/g) || []).join(' '); // remove all classes in the form [item-*] where * is a number
@@ -69,18 +66,20 @@ var activePagers = [];
 										
 				if (firstPager) { // Shift pager array to have the active ones always in first index
 					if (direction == "next") {
-						pagers.push(pagers.shift());
+						pagers.push(pagers.shift()); // shift array forward
 					}
 					else if (direction == "prev") {
 						pagers[total-1].css({'top': activeMargin});
 						currentTop += activeMargin + pagerSpacing;
 						
-						pagers.unshift(pagers.pop());
+						pagers.unshift(pagers.pop()); // shift array backwards
 					}
 					pagers[0].addClass('active');
 					
-					if (mobile) $('.spinner-background').height(pagers[0].outerHeight());
-					else $('.spinner-background').height(pagers[0].outerHeight() + activeMargin*2);
+					$('.spinner-background').height(pagers[0].outerHeight() + activeMargin*2);
+					var ctaLink = pagers[0].find('.pager-cta a').attr('href');
+					$('.spinner-background').find('.pager-cta').empty().append('<a></a>');
+					$('.spinner-background .pager-cta a').attr('href', ctaLink);
 				}
 				else {
 					pagers[i][0].style.removeProperty('margin');
@@ -90,10 +89,10 @@ var activePagers = [];
 					
 					pagers[i].addClass('item-' + i);
 					
-					if (direction == "prev" && firstPager && tabletOrAbove) { 
+					if (direction == "prev" && firstPager) { 
 						pagers[i] = copyAndShiftPagerPrev(pagers[i], pagers[i + numberOfPagersShowing], numberOfPagersShowing, total, activeMargin);
 					}
-					else if (tabletOrAbove && !pagers[i].attr('class').includes('transitioning')) {
+					else if (!pagers[i].attr('class').includes('transitioning')) {
 						
 						pagers[i].addClass('visible');
 						pagers[i].css({'top': currentTop});
@@ -108,13 +107,9 @@ var activePagers = [];
 					}
 
 					currentTop += pagers[i].outerHeight(); // calculate each pager's position
-					
-					if (mobile && firstPager) { 
-						pagers[i].css({'bottom': 0}); // Set pager location on mobile
-					}
 				}
 				
-				if (direction == "next" && i == numberOfPagersShowing - 1 && tabletOrAbove) {
+				if (direction == "next" && i == numberOfPagersShowing - 1) {
 					pagers[i] = copyAndShiftPagerNext(pagers[i], currentTop, pagers[total-1], numberOfPagersShowing, total);
 				}
 				
@@ -128,6 +123,34 @@ var activePagers = [];
 
 	var renderPagersMobile =  function(swiper, current, total) {
 		console.log("paginationCustomRender mobile, i: " + current);
+
+		if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
+
+			var $allPagers = $('.spinner-pagination').find('.pager').removeClass('active');
+			var direction = calculateSlideDirection(prevSlideIndex, current, total);
+
+			$.each(pagers, function(i){
+
+				var firstPager = (i == 0);
+										
+				if (firstPager) { // Shift pager array to have the active ones always in first index
+					if (direction == "next") {
+						pagers.push(pagers.shift());
+					}
+					else if (direction == "prev") {
+						pagers.unshift(pagers.pop());
+					}
+					pagers[0].addClass('active');
+
+					$('.spinner-background').height(pagers[0].outerHeight());
+					var ctaLink = pagers[0].find('.pager-cta a').attr('href');
+					$('.spinner-background').find('.pager-cta').empty().append('<a></a>');
+					$('.spinner-background .pager-cta a').attr('href', ctaLink);
+				}
+			});
+			prevSlideIndex = current; // used to compute direction change
+		}
+
 	}
 
 	var prevWindowSize = window.innerWidth;
@@ -144,15 +167,14 @@ var activePagers = [];
 		paginationType: 'custom',
 		speed: 500, // match $transition-speed in CSS
 		loop: true,
+		//effect: 'fade',
 		prevButton: '.swiper-page-prev',
 		nextButton: '.swiper-page-next',
 		breakpoints: {
 			768: { // mobile config
-				paginationType: 'custom',
 				paginationCustomRender: renderPagersMobile
 			},
 			9999: { // tablet and above
-				paginationType: 'custom',
 				paginationCustomRender: renderPagersTablet
 			}
 		}

@@ -56,6 +56,10 @@
 					&:hover {
 						opacity: 1;
 					}
+					&:active {
+						//opacity: 1;
+						background-size: 20px 12px;
+					}
 				}
 			}
 

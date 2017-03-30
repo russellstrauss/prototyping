@@ -166,6 +166,8 @@
     transition: opacity 0.5s ease; }
   .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-control:hover {
     opacity: 1; }
+  .animated-spinner-hero .spinner-container .spinner-background .swiper-controls .swiper-control:active {
+    background-size: 20px 12px; }
   .animated-spinner-hero .spinner-container .spinner-background .pager-cta {
     opacity: .5;
     transition: opacity 0.5s ease; }

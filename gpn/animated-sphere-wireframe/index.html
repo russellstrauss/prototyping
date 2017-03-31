@@ -1,32 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Demo</title>
-	
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="assets/sass/main.css">
-	
-	<style>
-		#canvas {
-			/*width: 100vw;
-			height: 100vh;*/
-			border: 1px solid black;
-		}
-		body {
-			overflow: hidden;
-		}
-	</style>
-	
-</head>
-<body>
-	
-	<canvas id="canvas" height="1800" width="1800"></canvas> 
-	
-	<script src="assets/js/jquery-2.2.3.min.js"></script>
-	<script src="assets/js/bootstrap.min.js"></script>
-	<script src="assets/js/three.min.js"></script>
-	<script type="text/javascript" src="assets/js/main.js"></script>
-</body>
+	<head>
+		<title>three.js canvas - interactive particles</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+
+		<script src="build/three.js"></script>
+
+		<script src="js/renderers/Projector.js"></script>
+		<script src="js/renderers/CanvasRenderer.js"></script>
+
+		<script src="js/libs/stats.min.js"></script>
+
+		<script>
+		
+			var nodeBehindSphere = function(node, sphereMesh) {
+				var radius = sphereMesh.geometry.parameters.radius;
+				var D = camera.position.distanceTo(sphereMesh.position);
+				var L = Math.sqrt(D*D - radius * radius);
+				return (camera.position.distanceTo(node.position) > L);
+			};
+		
+			// bugs
+			// 1. One node doesn't return to full opacity 
+			var container, stats;
+			var camera, scene, renderer;
+			var geometry;
+			var circles = [];
+			var fadeCome
+			var circle;
+			var sprite;
+			var isoRadius = 5;
+			var isoMesh;
+			var fadeSpeed = 0.04;
+			var wireframeColor = 0xb8c0c8;
+
+			var PI2 = Math.PI * 2;
+
+			init();
+			animate();
+
+			function init() {
+
+				container = document.createElement('div');
+				document.body.appendChild(container);
+
+				camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
+				camera.position.set(-400, 0, -300);
+
+				scene = new THREE.Scene();
+
+				geometry = new THREE.IcosahedronGeometry(200, 1);
+				var material = new THREE.MeshBasicMaterial({
+					color: wireframeColor,
+					wireframe: true
+				});
+				isoMesh = new THREE.Mesh(geometry, material);
+				scene.add(isoMesh);
+
+				// update geometry with new rotations
+				isoMesh.updateMatrix(); 
+				isoMesh.geometry.applyMatrix(isoMesh.matrix);
+				isoMesh.matrix.identity();
+				isoMesh.geometry.verticesNeedUpdate = true;
+				
+				// normalize
+				isoMesh.position.set(0, 0, 0);
+				isoMesh.rotation.set(0, 0, 0);
+				isoMesh.scale.set(1, 1, 1);
+
+				var segments = 30;
+				var circleGeometry;
+				var circleGeometry = new THREE.CircleGeometry(isoRadius, segments);
+
+				for (var i = 0; i < geometry.vertices.length; i++) {
+
+					var circleMaterial = new THREE.MeshBasicMaterial({ 
+						color: wireframeColor, 
+						transparent: true,
+						overdraw: 0.75 
+					});
+					var circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
+
+					circles.push(circleMesh);
+					circles[i].userData.fadeInComplete = false;
+					circles[i].userData.fadeOutComplete = false;
+
+					scene.add(circleMesh);
+					
+					// Set position of all nodes and face them to camera
+					circles[i].position.copy(geometry.vertices[i]);
+					circles[i].lookAt(camera.position);
+										
+					if (nodeBehindSphere(circles[i], isoMesh)) { // hide initially if positioned behind sphere
+						circles[i].material.opacity = 0;
+					}
+				}
+				
+
+
+
+				// var axisHelper = new THREE.AxisHelper( 100 );
+				// axisHelper.position.set(100, 100, 100);
+				// scene.add( axisHelper );
+
+
+
+
+
+
+
+
+
+
+				
+
+
+				renderer = new THREE.CanvasRenderer();
+				renderer.setClearColor(0xf0f0f0);
+				renderer.setPixelRatio(window.devicePixelRatio);
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				container.appendChild(renderer.domElement);
+
+				stats = new Stats();
+				container.appendChild(stats.dom);
+
+				window.addEventListener('resize', onWindowResize, false);
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame(animate);
+
+				isoMesh.rotation.x += 0.005;
+				isoMesh.rotation.y += 0.002;
+
+				// update vertices
+				isoMesh.updateMatrix(); 
+				isoMesh.geometry.applyMatrix(isoMesh.matrix);
+				isoMesh.rotation.set(0, 0, 0);
+
+				for (var i = 0; i < geometry.vertices.length; i++) {
+					
+					circles[i].position.copy(geometry.vertices[i]);
+					circles[i].lookAt(camera.position);
+					
+					if (!nodeBehindSphere(circles[i], isoMesh)) { // In front of the sphere
+						if (!circles[i].userData.fadeInComplete) { // if fade in not complete, decrease opacity
+							circles[i].material.opacity += fadeSpeed;
+							if (circles[i].material.opacity >= 1) { // once finished, reset values
+								circles[i].material.opacity = 1;
+								circles[i].userData.fadeInComplete = true;
+								circles[i].userData.fadeOutComplete = false;
+							}
+						}
+					}
+					else { // Now behind the sphere, begin fade;
+						if (!circles[i].userData.fadeOutComplete) {
+							circles[i].material.opacity -= fadeSpeed;
+							if (circles[i].material.opacity <= 0) {
+								circles[i].material.opacity = 0;
+								circles[i].userData.fadeOutComplete = true;
+								circles[i].userData.fadeInComplete = false;
+							}
+						}
+					}
+				}
+
+				render();
+				stats.update();
+
+			}
+
+			function render() {
+				camera.lookAt(scene.position);
+				camera.updateMatrixWorld();
+				renderer.render(scene, camera);
+			}
+
+		</script>
+
+	</body>
 </html>

@@ -28,32 +28,18 @@
 			var camera, scene, renderer;
 			var geometry;
 			var circles = {
-				"obj": [],
-				"fadeOutComplete": false
+				obj: [],
+				fadeInComplete: [],
+				fadeOutComplete: []
 			};
+			var fadeCome
 			var circle;
 			var sprite;
 			var isoRadius = 5;
 			var isoMesh;
+			var fadeSpeed = 0.04;
 
 			var PI2 = Math.PI * 2;
-
-			var programFill = function (context) {
-
-				context.beginPath();
-				context.arc(0, 0, 0.5, 0, PI2, true);
-				context.fill();
-
-			};
-
-			var programStroke = function (context) {
-
-				context.lineWidth = 0.025;
-				context.beginPath();
-				context.arc(0, 0, 0.5, 0, PI2, true);
-				context.stroke();
-
-			};
 
 			init();
 			animate();
@@ -96,13 +82,27 @@
 
 					var circleMaterial = new THREE.MeshBasicMaterial({ 
 						color: 0xccd7e1, 
-						side: THREE.DoubleSide, 
+						side: THREE.DoubleSide, //probably not needed
+						transparent: true,
 						overdraw: 0.75 
 					});
 					var circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
 
 					circles.obj.push(circleMesh);
+					circles.fadeInComplete.push(false);
+					circles.fadeOutComplete.push(false);
 					scene.add(circleMesh);
+					
+					// set visibility of all nodes behind sphere to false to begin in the correct state
+					var D = camera.position.distanceTo(isoMesh.position);
+					var L = Math.sqrt(D*D - isoRadius * isoRadius);
+					
+					circles.obj[i].position.copy(geometry.vertices[i]);
+					circles.obj[i].lookAt(camera.position);
+					
+					if (camera.position.distanceTo(circles.obj[i].position) > L) { // if nodes are behind sphere
+						circles.obj[i].material.opacity = 0;
+					}
 				}
 				
 
@@ -163,20 +163,36 @@
 
 					var D = camera.position.distanceTo(isoMesh.position);
 					var L = Math.sqrt(D*D - isoRadius * isoRadius);
-					//console.log(L);
-					
-					//debugger;
+
 					circles.obj[i].position.copy(geometry.vertices[i]);
 					circles.obj[i].lookAt(camera.position);
-					if (camera.position.distanceTo(circles.obj[i].position) < L) {
-						//circles[i].visible = true;
-						circles.obj[i].material.transparent = false;
-						circles.obj[i].material.opacity = 1;
+					if (camera.position.distanceTo(circles.obj[i].position) <= L) {
+						// In front of the sphere
+						
+						
+						
+						
+						if (!circles.fadeInComplete[i]) {
+							circles.obj[i].material.opacity += fadeSpeed;
+							if (circles.obj[i].material.opacity >= 1) {
+								circles.obj[i].material.opacity = 1;
+								circles.fadeInComplete[i] = true;
+								circles.fadeOutComplete[i] = false;
+							}
+						}
+						
 					}
 					else {
-						//circles[i].visible = false;
-						circles.obj[i].material.transparent = true;
-						circles.obj[i].material.opacity = .25;
+						// Now behind the sphere, begin fade;
+						if (!circles.fadeOutComplete[i]) {
+							circles.obj[i].material.opacity -= fadeSpeed;
+							if (circles.obj[i].material.opacity <= 0) {
+								circles.obj[i].material.opacity = 0;
+								circles.fadeOutComplete[i] = true;
+								circles.fadeInComplete[i] = false;
+							}
+						}
+						//circles.obj[i].material.opacity -= 0.01;
 					}
 				}
 

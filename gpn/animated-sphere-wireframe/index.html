@@ -36,7 +36,7 @@
 			var container, stats;
 			var camera, scene, renderer;
 			var geometry;
-			var circles = [];
+			var nodes = [];
 			var fadeCome
 			var circle;
 			var sprite;
@@ -82,7 +82,8 @@
 				var segments = 30;
 				var circleGeometry;
 				var circleGeometry = new THREE.CircleGeometry(isoRadius, segments);
-
+				
+				// Initialize all nodes
 				for (var i = 0; i < geometry.vertices.length; i++) {
 
 					var circleMaterial = new THREE.MeshBasicMaterial({ 
@@ -92,32 +93,31 @@
 					});
 					var circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
 
-					circles.push(circleMesh);
-					circles[i].userData.fadeInComplete = false;
-					circles[i].userData.fadeOutComplete = false;
+					nodes.push(circleMesh);
+					nodes[i].userData.fadeInComplete = false;
+					nodes[i].userData.fadeOutComplete = false;
 
 					scene.add(circleMesh);
 					
 					// Set position of all nodes and face them to camera
-					circles[i].position.copy(geometry.vertices[i]);
-					circles[i].lookAt(camera.position);
+					nodes[i].position.copy(geometry.vertices[i]);
+					nodes[i].lookAt(camera.position);
 										
-					if (nodeBehindSphere(circles[i], isoMesh)) { // hide initially if positioned behind sphere
-						circles[i].material.opacity = 0;
+					// if (nodeBehindSphere(nodes[i], isoMesh)) { // hide initially if positioned behind sphere
+					// 	nodes[i].material.opacity = 0;
+					// }
+					if (i == 0) {
+						isoMesh.userData.closestNode = nodes[0];
+						isoMesh.userData.farthestNode = nodes[0];
+					}
+					// update closest node
+					if (isoMesh.userData.closestNode.position.distanceTo(camera.position) > nodes[i].position.distanceTo(camera.position)) {
+						isoMesh.userData.closestNode = nodes[i];
+					}
+					if (isoMesh.userData.farthestNode.position.distanceTo(camera.position) < nodes[i].position.distanceTo(camera.position)) {
+						isoMesh.userData.farthestNode = nodes[i];
 					}
 				}
-				
-
-
-
-				// var axisHelper = new THREE.AxisHelper( 100 );
-				// axisHelper.position.set(100, 100, 100);
-				// scene.add( axisHelper );
-
-
-
-
-
 
 
 
@@ -161,29 +161,41 @@
 
 				for (var i = 0; i < geometry.vertices.length; i++) {
 					
-					circles[i].position.copy(geometry.vertices[i]);
-					circles[i].lookAt(camera.position);
+					nodes[i].position.copy(geometry.vertices[i]);
+					nodes[i].lookAt(camera.position);
 					
-					if (!nodeBehindSphere(circles[i], isoMesh)) { // In front of the sphere
-						if (!circles[i].userData.fadeInComplete) { // if fade in not complete, decrease opacity
-							circles[i].material.opacity += fadeSpeed;
-							if (circles[i].material.opacity >= 1) { // once finished, reset values
-								circles[i].material.opacity = 1;
-								circles[i].userData.fadeInComplete = true;
-								circles[i].userData.fadeOutComplete = false;
-							}
-						}
+					// update closest node
+					if (isoMesh.userData.closestNode.position.distanceTo(camera.position) > nodes[i].position.distanceTo(camera.position)) {
+						isoMesh.userData.closestNode = nodes[i];
 					}
-					else { // Now behind the sphere, begin fade;
-						if (!circles[i].userData.fadeOutComplete) {
-							circles[i].material.opacity -= fadeSpeed;
-							if (circles[i].material.opacity <= 0) {
-								circles[i].material.opacity = 0;
-								circles[i].userData.fadeOutComplete = true;
-								circles[i].userData.fadeInComplete = false;
-							}
-						}
+					if (isoMesh.userData.farthestNode.position.distanceTo(camera.position) < nodes[i].position.distanceTo(camera.position)) {
+						isoMesh.userData.farthestNode = nodes[i];
 					}
+					//nodes[i].material.color.setHex(0xffff00);
+					if (nodes[i] == isoMesh.userData.closestNode) nodes[i].material.color.setHex(0xff0000);
+					else if (nodes[i] == isoMesh.userData.farthestNode) nodes[i].material.color.setHex(0x0000ff);
+					else nodes[i].material.color.setHex(0xffff00);
+					
+					// if (!nodeBehindSphere(nodes[i], isoMesh)) { // In front of the sphere
+					// 	if (!nodes[i].userData.fadeInComplete) { // if fade in not complete, decrease opacity
+					// 		nodes[i].material.opacity += fadeSpeed;
+					// 		if (nodes[i].material.opacity >= 1) { // once finished, reset values
+					// 			nodes[i].material.opacity = 1;
+					// 			nodes[i].userData.fadeInComplete = true;
+					// 			nodes[i].userData.fadeOutComplete = false;
+					// 		}
+					// 	}
+					// }
+					// else { // Now behind the sphere, begin fade;
+					// 	if (!nodes[i].userData.fadeOutComplete) {
+					// 		nodes[i].material.opacity -= fadeSpeed;
+					// 		if (nodes[i].material.opacity <= 0) {
+					// 			nodes[i].material.opacity = 0;
+					// 			nodes[i].userData.fadeOutComplete = true;
+					// 			nodes[i].userData.fadeInComplete = false;
+					// 		}
+					// 	}
+					// }
 				}
 
 				render();

@@ -16,7 +16,8 @@
   padding-right: 15px; }
 
 .animated-spinner-hero .swiper-wrapper .swiper-slide .headline {
-  color: white; }
+  color: white;
+  width: 50vw; }
 
 .animated-spinner-hero .swiper-wrapper .swiper-slide .headline h2 {
   font-family: 'Open Sans', sans-serif;
@@ -144,9 +145,8 @@
     line-height: 1.4; }
   .animated-spinner-hero .spinner-container {
     top: 60vh;
-    width: 50vw;
-    height: auto;
-    min-width: 700px; }
+    width: 40vw;
+    height: auto; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager {
     font-size: 20px;
     padding: 0 50px 0 75px;

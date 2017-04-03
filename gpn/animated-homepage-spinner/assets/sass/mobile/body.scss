@@ -28,7 +28,7 @@ $transition-speed: .5s;
 			
 			.headline {
 				color: white;
-						
+				width: 50vw;
 				h2 {
 					@include OpenSansExtraBold;
 					font-size: 10vw;

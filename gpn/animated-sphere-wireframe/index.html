@@ -30,9 +30,16 @@
 				var L = Math.sqrt(D*D - radius * radius);
 				return (camera.position.distanceTo(node.position) > L);
 			};
+			var interpolateNodeDistance = function(sphere, cloesestNode, farthestNode) {
+				var distanceInterpolation;
+				return distanceInterpolation;
+			};
 		
 			// bugs
 			// 1. One node doesn't return to full opacity 
+			
+			// todo
+			// 1. Interpolate size of nodes based on ratio of closest and farthest nodes
 			var container, stats;
 			var camera, scene, renderer;
 			var geometry;
@@ -44,6 +51,8 @@
 			var isoMesh;
 			var fadeSpeed = 0.04;
 			var wireframeColor = 0xb8c0c8;
+			var closestNodeDistance;
+			var farthestNodeDistance;
 
 			var PI2 = Math.PI * 2;
 
@@ -106,7 +115,7 @@
 					// if (nodeBehindSphere(nodes[i], isoMesh)) { // hide initially if positioned behind sphere
 					// 	nodes[i].material.opacity = 0;
 					// }
-					if (i == 0) {
+					if (i == 0) { // initialize closest and farthest nodes
 						isoMesh.userData.closestNode = nodes[0];
 						isoMesh.userData.farthestNode = nodes[0];
 					}
@@ -148,7 +157,9 @@
 			}
 
 			function animate() {
-
+				
+				//console.clear();
+				
 				requestAnimationFrame(animate);
 
 				isoMesh.rotation.x += 0.005;
@@ -158,24 +169,28 @@
 				isoMesh.updateMatrix(); 
 				isoMesh.geometry.applyMatrix(isoMesh.matrix);
 				isoMesh.rotation.set(0, 0, 0);
-
+				
 				for (var i = 0; i < geometry.vertices.length; i++) {
 					
 					nodes[i].position.copy(geometry.vertices[i]);
 					nodes[i].lookAt(camera.position);
 					
-					// update closest node
+					// update closest and farthest nodes
+					
 					if (isoMesh.userData.closestNode.position.distanceTo(camera.position) > nodes[i].position.distanceTo(camera.position)) {
 						isoMesh.userData.closestNode = nodes[i];
+						closestNodeDistance = isoMesh.userData.closestNode.position.distanceTo(camera.position);
 					}
 					if (isoMesh.userData.farthestNode.position.distanceTo(camera.position) < nodes[i].position.distanceTo(camera.position)) {
 						isoMesh.userData.farthestNode = nodes[i];
+						farthestNodeDistance = isoMesh.userData.farthestNode.position.distanceTo(camera.position);
 					}
 					//nodes[i].material.color.setHex(0xffff00);
 					if (nodes[i] == isoMesh.userData.closestNode) nodes[i].material.color.setHex(0xff0000);
 					else if (nodes[i] == isoMesh.userData.farthestNode) nodes[i].material.color.setHex(0x0000ff);
-					else nodes[i].material.color.setHex(0xffff00);
+					else nodes[i].material.color.setHex(wireframeColor);
 					
+					// Fade out when triggering visibilty
 					// if (!nodeBehindSphere(nodes[i], isoMesh)) { // In front of the sphere
 					// 	if (!nodes[i].userData.fadeInComplete) { // if fade in not complete, decrease opacity
 					// 		nodes[i].material.opacity += fadeSpeed;

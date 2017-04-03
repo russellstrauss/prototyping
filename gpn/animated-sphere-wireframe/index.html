@@ -24,22 +24,35 @@
 
 		<script>
 		
-			var nodeBehindSphere = function(node, sphereMesh) {
+			var nodeBehindSphere = function(node, sphereMesh, edgeCaseMargin) {
+				// edgeCaseMargin: If you want to change the value slightly so that nodes will show slightly before or after moving behind sphere rather than exactly when tangent lines are equal. Right now this value is based on three.js point distance
+				edgeCaseMargin = edgeCaseMargin || 0;
 				var radius = sphereMesh.geometry.parameters.radius;
 				var D = camera.position.distanceTo(sphereMesh.position);
 				var L = Math.sqrt(D*D - radius * radius);
-				return (camera.position.distanceTo(node.position) > L);
+				return (camera.position.distanceTo(node.position) > (L + edgeCaseMargin));
 			};
-			var interpolateNodeDistance = function(sphere, cloesestNode, farthestNode) {
-				var distanceInterpolation;
-				return distanceInterpolation;
+			var interpolateNodeDistance = function(currentNode, closestNode, farthestNode) {
+				// where Rn is the ratio calculated as a linear interpolation between R1 (max scale) and R2 (min scale) based on the distance. In other words, choose a scale, in this case between .25 and 1, and then figure out what the in-between value would be for that point that is closer than point 2, but farther than point 1. http://www.isda.org/c_and_a/pdf/Linear-interpolation-example.pdf
+				
+				var closestDistance = closestNode.position.distanceTo(camera.position);
+				var farthestDistance = farthestNode.position.distanceTo(camera.position);
+				var currentDistance = currentNode.position.distanceTo(camera.position);
+				
+				var R1 = 1; // Ratio of scale for closest node, aka original size
+				var R2 = .4; // Ratio of scale for farthest node
+				var t1 = closestDistance;
+				var t2 = farthestDistance;
+				var tn = currentDistance;
+				
+				var Rn = R1 + ((R2 - R1)/(t2 - t1))*(tn - t1);
+				
+				return Rn;
 			};
 		
-			// bugs
-			// 1. One node doesn't return to full opacity 
-			
 			// todo
 			// 1. Interpolate size of nodes based on ratio of closest and farthest nodes
+			var projector, mouse = { x: 0, y: 0 }, INTERSECTED;
 			var container, stats;
 			var camera, scene, renderer;
 			var geometry;
@@ -47,14 +60,14 @@
 			var fadeCome
 			var circle;
 			var sprite;
-			var isoRadius = 5;
+			var nodeRadius = 8;
+			var isoRadius = 200;
 			var isoMesh;
 			var fadeSpeed = 0.04;
 			var wireframeColor = 0xb8c0c8;
 			var closestNodeDistance;
 			var farthestNodeDistance;
-
-			var PI2 = Math.PI * 2;
+			var nodeVisibilityMargin = 50;
 
 			init();
 			animate();
@@ -69,7 +82,7 @@
 
 				scene = new THREE.Scene();
 
-				geometry = new THREE.IcosahedronGeometry(200, 1);
+				geometry = new THREE.IcosahedronGeometry(isoRadius, 1);
 				var material = new THREE.MeshBasicMaterial({
 					color: wireframeColor,
 					wireframe: true
@@ -89,8 +102,7 @@
 				isoMesh.scale.set(1, 1, 1);
 
 				var segments = 30;
-				var circleGeometry;
-				var circleGeometry = new THREE.CircleGeometry(isoRadius, segments);
+				var circleGeometry = new THREE.CircleGeometry(nodeRadius, segments);
 				
 				// Initialize all nodes
 				for (var i = 0; i < geometry.vertices.length; i++) {
@@ -112,9 +124,9 @@
 					nodes[i].position.copy(geometry.vertices[i]);
 					nodes[i].lookAt(camera.position);
 										
-					// if (nodeBehindSphere(nodes[i], isoMesh)) { // hide initially if positioned behind sphere
-					// 	nodes[i].material.opacity = 0;
-					// }
+					if (nodeBehindSphere(nodes[i], isoMesh, nodeVisibilityMargin)) { // hide initially if positioned behind sphere
+						nodes[i].material.opacity = 0;
+					}
 					if (i == 0) { // initialize closest and farthest nodes
 						isoMesh.userData.closestNode = nodes[0];
 						isoMesh.userData.farthestNode = nodes[0];
@@ -126,9 +138,11 @@
 					if (isoMesh.userData.farthestNode.position.distanceTo(camera.position) < nodes[i].position.distanceTo(camera.position)) {
 						isoMesh.userData.farthestNode = nodes[i];
 					}
+					var distanceScale = interpolateNodeDistance(nodes[i], isoMesh.userData.closestNode, isoMesh.userData.farthestNode);
+					nodes[i].scale.set(distanceScale, distanceScale, distanceScale);
 				}
 
-
+				
 
 
 
@@ -143,17 +157,23 @@
 
 				stats = new Stats();
 				container.appendChild(stats.dom);
-
+				
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 				window.addEventListener('resize', onWindowResize, false);
 
 			}
 
 			function onWindowResize() {
-
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 				renderer.setSize(window.innerWidth, window.innerHeight);
-
+			}
+			
+			function onDocumentMouseMove(event) 
+			{
+				event.preventDefault();
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 			}
 
 			function animate() {
@@ -176,7 +196,6 @@
 					nodes[i].lookAt(camera.position);
 					
 					// update closest and farthest nodes
-					
 					if (isoMesh.userData.closestNode.position.distanceTo(camera.position) > nodes[i].position.distanceTo(camera.position)) {
 						isoMesh.userData.closestNode = nodes[i];
 						closestNodeDistance = isoMesh.userData.closestNode.position.distanceTo(camera.position);
@@ -185,32 +204,38 @@
 						isoMesh.userData.farthestNode = nodes[i];
 						farthestNodeDistance = isoMesh.userData.farthestNode.position.distanceTo(camera.position);
 					}
+					
+					// Highlight closest and farthest nodes
 					//nodes[i].material.color.setHex(0xffff00);
-					if (nodes[i] == isoMesh.userData.closestNode) nodes[i].material.color.setHex(0xff0000);
-					else if (nodes[i] == isoMesh.userData.farthestNode) nodes[i].material.color.setHex(0x0000ff);
-					else nodes[i].material.color.setHex(wireframeColor);
+					// if (nodes[i] == isoMesh.userData.closestNode) nodes[i].material.color.setHex(0xff0000);
+					// else if (nodes[i] == isoMesh.userData.farthestNode) nodes[i].material.color.setHex(0x0000ff);
+					// else nodes[i].material.color.setHex(wireframeColor);
+					
+					// Scale nodes based on distance from camera, but normalized so that moving camera won't affect scale
+					var distanceScale = interpolateNodeDistance(nodes[i], isoMesh.userData.closestNode, isoMesh.userData.farthestNode);
+					nodes[i].scale.set(distanceScale, distanceScale, distanceScale);
 					
 					// Fade out when triggering visibilty
-					// if (!nodeBehindSphere(nodes[i], isoMesh)) { // In front of the sphere
-					// 	if (!nodes[i].userData.fadeInComplete) { // if fade in not complete, decrease opacity
-					// 		nodes[i].material.opacity += fadeSpeed;
-					// 		if (nodes[i].material.opacity >= 1) { // once finished, reset values
-					// 			nodes[i].material.opacity = 1;
-					// 			nodes[i].userData.fadeInComplete = true;
-					// 			nodes[i].userData.fadeOutComplete = false;
-					// 		}
-					// 	}
-					// }
-					// else { // Now behind the sphere, begin fade;
-					// 	if (!nodes[i].userData.fadeOutComplete) {
-					// 		nodes[i].material.opacity -= fadeSpeed;
-					// 		if (nodes[i].material.opacity <= 0) {
-					// 			nodes[i].material.opacity = 0;
-					// 			nodes[i].userData.fadeOutComplete = true;
-					// 			nodes[i].userData.fadeInComplete = false;
-					// 		}
-					// 	}
-					// }
+					if (!nodeBehindSphere(nodes[i], isoMesh, nodeVisibilityMargin)) { // In front of the sphere
+						if (!nodes[i].userData.fadeInComplete) { // if fade in not complete, decrease opacity
+							nodes[i].material.opacity += fadeSpeed;
+							if (nodes[i].material.opacity >= 1) { // once finished, reset values
+								nodes[i].material.opacity = 1;
+								nodes[i].userData.fadeInComplete = true;
+								nodes[i].userData.fadeOutComplete = false;
+							}
+						}
+					}
+					else { // Now behind the sphere, begin fade;
+						if (!nodes[i].userData.fadeOutComplete) {
+							nodes[i].material.opacity -= fadeSpeed;
+							if (nodes[i].material.opacity <= 0) {
+								nodes[i].material.opacity = 0;
+								nodes[i].userData.fadeOutComplete = true;
+								nodes[i].userData.fadeInComplete = false;
+							}
+						}
+					}
 				}
 
 				render();

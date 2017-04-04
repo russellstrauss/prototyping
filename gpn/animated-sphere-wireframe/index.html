@@ -52,12 +52,11 @@
 		
 			// todo
 			// 1. Interpolate size of nodes based on ratio of closest and farthest nodes
-			var projector, mouse = { x: 0, y: 0 }, INTERSECTED;
 			var container, stats;
 			var camera, scene, renderer;
+			var intersects;
 			var geometry;
 			var nodes = [];
-			var fadeCome
 			var circle;
 			var sprite;
 			var nodeRadius = 8;
@@ -68,6 +67,9 @@
 			var closestNodeDistance;
 			var farthestNodeDistance;
 			var nodeVisibilityMargin = 50;
+			
+			var raycaster = new THREE.Raycaster();
+			var mouse = new THREE.Vector2(9999,9999);
 
 			init();
 			animate();
@@ -158,7 +160,8 @@
 				stats = new Stats();
 				container.appendChild(stats.dom);
 				
-				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				//document.addEventListener('mousemove', onDocumentMouseMove, false);
+				renderer.domElement.addEventListener('mousemove', onDocumentMouseMove);
 				window.addEventListener('resize', onWindowResize, false);
 
 			}
@@ -169,11 +172,36 @@
 				renderer.setSize(window.innerWidth, window.innerHeight);
 			}
 			
+			function detectMouseOvers() {
+				
+				raycaster.setFromCamera(mouse, camera);
+				var intersects = raycaster.intersectObjects(scene.children);
+				
+				console.log(INTERSECTED);
+				
+				if (intersects.length > 0) {
+
+					if (INTERSECTED != intersects[0].object) {
+
+						if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+
+						INTERSECTED = intersects[0].object;
+						INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+						INTERSECTED.material.emissive.setHex(0xff0000);
+					}
+				}
+				else {
+					if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+
+					INTERSECTED = null;
+				}
+			}
+			
 			function onDocumentMouseMove(event) 
 			{
 				event.preventDefault();
-				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+				mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+				mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 			}
 
 			function animate() {
@@ -237,13 +265,24 @@
 						}
 					}
 				}
-
+				
+				//detectMouseOvers();
 				render();
 				stats.update();
 
 			}
 
 			function render() {
+				
+				// update the picking ray with the camera and mouse position
+				raycaster.setFromCamera(mouse, camera);
+				
+				// calculate objects intersecting the picking ray
+				intersects = raycaster.intersectObjects(scene.children);
+				//for (var i = 0; i < intersects.length; i++) {
+					if (intersects.length > 0) intersects[0].object.material.color.setHex( 0xff0000 );
+				//}
+				
 				camera.lookAt(scene.position);
 				camera.updateMatrixWorld();
 				renderer.render(scene, camera);

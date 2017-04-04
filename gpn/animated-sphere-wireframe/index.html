@@ -40,7 +40,7 @@
 				var currentDistance = currentNode.position.distanceTo(camera.position);
 				
 				var R1 = 1; // Ratio of scale for closest node, aka original size
-				var R2 = .4; // Ratio of scale for farthest node
+				var R2 = backgroundNodeScale; // Ratio of scale for farthest node
 				var t1 = closestDistance;
 				var t2 = farthestDistance;
 				var tn = currentDistance;
@@ -52,9 +52,10 @@
 		
 			// todo
 			// 1. Interpolate size of nodes based on ratio of closest and farthest nodes
+			var requestAnimationFrameID;
 			var container, stats;
 			var camera, scene, renderer;
-			var intersects;
+			var raycaster, mouse, intersects;
 			var geometry;
 			var nodes = [];
 			var circle;
@@ -62,20 +63,22 @@
 			var nodeRadius = 8;
 			var isoRadius = 200;
 			var isoMesh;
+			var opacityFloor = 0.1;
 			var fadeSpeed = 0.04;
 			var wireframeColor = 0xb8c0c8;
 			var closestNodeDistance;
 			var farthestNodeDistance;
 			var nodeVisibilityMargin = 50;
 			
-			var raycaster = new THREE.Raycaster();
-			var mouse = new THREE.Vector2(9999,9999);
+			var backgroundNodeScale = .75;
+			
+			
 
 			init();
 			animate();
 
 			function init() {
-
+				
 				container = document.createElement('div');
 				document.body.appendChild(container);
 
@@ -105,6 +108,8 @@
 
 				var segments = 30;
 				var circleGeometry = new THREE.CircleGeometry(nodeRadius, segments);
+				circleGeometry.vertices.shift();
+
 				
 				// Initialize all nodes
 				for (var i = 0; i < geometry.vertices.length; i++) {
@@ -156,12 +161,14 @@
 				renderer.setPixelRatio(window.devicePixelRatio);
 				renderer.setSize(window.innerWidth, window.innerHeight);
 				container.appendChild(renderer.domElement);
-
+				
+				//raycaster = new THREE.Raycaster();
+				//mouse = new THREE.Vector2(9999,9999);
+				
 				stats = new Stats();
 				container.appendChild(stats.dom);
 				
-				//document.addEventListener('mousemove', onDocumentMouseMove, false);
-				renderer.domElement.addEventListener('mousemove', onDocumentMouseMove);
+				//renderer.domElement.addEventListener('mousemove', onDocumentMouseMove);
 				window.addEventListener('resize', onWindowResize, false);
 
 			}
@@ -170,31 +177,6 @@
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 				renderer.setSize(window.innerWidth, window.innerHeight);
-			}
-			
-			function detectMouseOvers() {
-				
-				raycaster.setFromCamera(mouse, camera);
-				var intersects = raycaster.intersectObjects(scene.children);
-				
-				console.log(INTERSECTED);
-				
-				if (intersects.length > 0) {
-
-					if (INTERSECTED != intersects[0].object) {
-
-						if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
-
-						INTERSECTED = intersects[0].object;
-						INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-						INTERSECTED.material.emissive.setHex(0xff0000);
-					}
-				}
-				else {
-					if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
-
-					INTERSECTED = null;
-				}
 			}
 			
 			function onDocumentMouseMove(event) 
@@ -206,82 +188,73 @@
 
 			function animate() {
 				
-				//console.clear();
-				
-				requestAnimationFrame(animate);
+				try {
+					isoMesh.rotation.x += 0.005;
+					isoMesh.rotation.y += 0.002;
 
-				isoMesh.rotation.x += 0.005;
-				isoMesh.rotation.y += 0.002;
-
-				// update vertices
-				isoMesh.updateMatrix(); 
-				isoMesh.geometry.applyMatrix(isoMesh.matrix);
-				isoMesh.rotation.set(0, 0, 0);
-				
-				for (var i = 0; i < geometry.vertices.length; i++) {
+					// update vertices
+					isoMesh.updateMatrix(); 
+					isoMesh.geometry.applyMatrix(isoMesh.matrix);
+					isoMesh.rotation.set(0, 0, 0);
 					
-					nodes[i].position.copy(geometry.vertices[i]);
-					nodes[i].lookAt(camera.position);
-					
-					// update closest and farthest nodes
-					if (isoMesh.userData.closestNode.position.distanceTo(camera.position) > nodes[i].position.distanceTo(camera.position)) {
-						isoMesh.userData.closestNode = nodes[i];
-						closestNodeDistance = isoMesh.userData.closestNode.position.distanceTo(camera.position);
-					}
-					if (isoMesh.userData.farthestNode.position.distanceTo(camera.position) < nodes[i].position.distanceTo(camera.position)) {
-						isoMesh.userData.farthestNode = nodes[i];
-						farthestNodeDistance = isoMesh.userData.farthestNode.position.distanceTo(camera.position);
-					}
-					
-					// Highlight closest and farthest nodes
-					//nodes[i].material.color.setHex(0xffff00);
-					// if (nodes[i] == isoMesh.userData.closestNode) nodes[i].material.color.setHex(0xff0000);
-					// else if (nodes[i] == isoMesh.userData.farthestNode) nodes[i].material.color.setHex(0x0000ff);
-					// else nodes[i].material.color.setHex(wireframeColor);
-					
-					// Scale nodes based on distance from camera, but normalized so that moving camera won't affect scale
-					var distanceScale = interpolateNodeDistance(nodes[i], isoMesh.userData.closestNode, isoMesh.userData.farthestNode);
-					nodes[i].scale.set(distanceScale, distanceScale, distanceScale);
-					
-					// Fade out when triggering visibilty
-					if (!nodeBehindSphere(nodes[i], isoMesh, nodeVisibilityMargin)) { // In front of the sphere
-						if (!nodes[i].userData.fadeInComplete) { // if fade in not complete, decrease opacity
-							nodes[i].material.opacity += fadeSpeed;
-							if (nodes[i].material.opacity >= 1) { // once finished, reset values
-								nodes[i].material.opacity = 1;
-								nodes[i].userData.fadeInComplete = true;
-								nodes[i].userData.fadeOutComplete = false;
+					for (var i = 0; i < geometry.vertices.length; i++) {
+						
+						nodes[i].position.copy(geometry.vertices[i]);
+						nodes[i].lookAt(camera.position);
+						
+						// update closest and farthest nodes
+						if (isoMesh.userData.closestNode.position.distanceTo(camera.position) > nodes[i].position.distanceTo(camera.position)) {
+							isoMesh.userData.closestNode = nodes[i];
+							closestNodeDistance = isoMesh.userData.closestNode.position.distanceTo(camera.position);
+						}
+						if (isoMesh.userData.farthestNode.position.distanceTo(camera.position) < nodes[i].position.distanceTo(camera.position)) {
+							isoMesh.userData.farthestNode = nodes[i];
+							farthestNodeDistance = isoMesh.userData.farthestNode.position.distanceTo(camera.position);
+						}
+						
+						// Scale nodes based on distance from camera, but normalized so that moving camera won't affect scale
+						var distanceScale = interpolateNodeDistance(nodes[i], isoMesh.userData.closestNode, isoMesh.userData.farthestNode);
+						nodes[i].scale.set(distanceScale, distanceScale, distanceScale);
+						
+						// Fade out when triggering visibilty
+						if (!nodeBehindSphere(nodes[i], isoMesh, nodeVisibilityMargin)) { // In front of the sphere
+							if (!nodes[i].userData.fadeInComplete) { // if fade in not complete, decrease opacity
+								nodes[i].material.opacity += fadeSpeed;
+								if (nodes[i].material.opacity >= 1) { // once finished, reset values
+									nodes[i].material.opacity = 1;
+									nodes[i].userData.fadeInComplete = true;
+									nodes[i].userData.fadeOutComplete = false;
+								}
+							}
+						}
+						else { // Now behind the sphere, begin fade;
+							if (!nodes[i].userData.fadeOutComplete) {
+								nodes[i].material.opacity -= fadeSpeed;
+								if (nodes[i].material.opacity <= opacityFloor) {
+									nodes[i].material.opacity = opacityFloor;
+									nodes[i].userData.fadeOutComplete = true;
+									nodes[i].userData.fadeInComplete = false;
+								}
 							}
 						}
 					}
-					else { // Now behind the sphere, begin fade;
-						if (!nodes[i].userData.fadeOutComplete) {
-							nodes[i].material.opacity -= fadeSpeed;
-							if (nodes[i].material.opacity <= 0) {
-								nodes[i].material.opacity = 0;
-								nodes[i].userData.fadeOutComplete = true;
-								nodes[i].userData.fadeInComplete = false;
-							}
-						}
-					}
+										
+					requestAnimationFrameID = requestAnimationFrame(animate);
+					render();
+					stats.update();
 				}
-				
-				//detectMouseOvers();
-				render();
-				stats.update();
-
+				catch(error) {
+					console.log(error);
+					cancelAnimationFrame(requestAnimationFrameID);
+				}
 			}
 
 			function render() {
 				
-				// update the picking ray with the camera and mouse position
-				raycaster.setFromCamera(mouse, camera);
-				
-				// calculate objects intersecting the picking ray
-				intersects = raycaster.intersectObjects(scene.children);
-				//for (var i = 0; i < intersects.length; i++) {
-					if (intersects.length > 0) intersects[0].object.material.color.setHex( 0xff0000 );
-				//}
+				// mouse detection using raycasting
+				// raycaster.setFromCamera(mouse, camera);				
+				// intersects = raycaster.intersectObjects(scene.children);
+				// if (intersects.length > 0) intersects[0].object.material.color.setHex(0xff0000);
 				
 				camera.lookAt(scene.position);
 				camera.updateMatrixWorld();

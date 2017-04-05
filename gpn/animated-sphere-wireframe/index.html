@@ -108,7 +108,7 @@
 
 				var segments = 30;
 				var circleGeometry = new THREE.CircleGeometry(nodeRadius, segments);
-				circleGeometry.vertices.shift();
+				//circleGeometry.vertices.shift();
 
 				
 				// Initialize all nodes
@@ -243,7 +243,7 @@
 					render();
 					stats.update();
 				}
-				catch(error) {
+				catch(error) {  
 					console.log(error);
 					cancelAnimationFrame(requestAnimationFrameID);
 				}

@@ -4,7 +4,6 @@
 // 2. Back button doesnt work on mobile
 
 var pagers = []; // define out here for testing. move farther down in scope later.
-var activePagers = [];
 
 (function(){
 	
@@ -41,12 +40,43 @@ var activePagers = [];
 		// }, $('.spinner-pagination .pager').length * pagerFadeInInterval);
 		
 	}
-	
+	var calculateSlideDirection = function(prevIndex, currentIndex, total) {
+		var direction;
+		//first slide
+		if (currentIndex == 1) {
+			if (prevIndex == total) { // final slide was previous
+				direction = "next"
+			}
+			else if (prevIndex > currentIndex) {
+				direction = "prev";
+			}
+		}
+		// final slide
+		else if (currentIndex == total) {
+			if (prevIndex == 1) { // first slide was previous
+				direction = "prev";
+			}
+			else if (prevIndex < currentIndex) {
+				direction = "next";
+			}
+		}
+		// middle slides
+		else { 
+			if (prevIndex < currentIndex) {
+				direction = "next";
+			}
+			else direction = "prev";
+		}
+		if (prevIndex == currentIndex) return false;
+		return direction;
+	}
 
 	var renderPagersTablet =  function(swiper, current, total) {
-		console.clear();
-			
+		
+		//console.clear();
+		
 		if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
+			
 			var numberOfPagersShowing = 4;
 			var direction = calculateSlideDirection(prevSlideIndex, current, total);
 			var activeMargin = 25;
@@ -57,7 +87,6 @@ var activePagers = [];
 			$allPagers.removeClass(function (index, className) {
 				return (className.match (/item-[0-9]/g) || []).join(' '); // remove all classes in the form [item-*] where * is a number
 			});
-			
 			
 			// loop through pagination
 			$.each(pagers, function(i){
@@ -74,6 +103,7 @@ var activePagers = [];
 						
 						pagers.unshift(pagers.pop()); // shift array backwards
 					}
+					
 					pagers[0].addClass('active');
 					
 					$('.spinner-background').height(pagers[0].outerHeight() + activeMargin*2);
@@ -115,6 +145,12 @@ var activePagers = [];
 				
 			});
 			
+			console.log(current);
+			console.dir(pagers[0].text());
+			$.each(pagers, function(i){
+				console.log("[" + i + "]: " + $(this).text().replace(/\s/g,''));
+			});
+			
 			$('.spinner-pagination').height(currentTop);
 			
 			prevSlideIndex = current; // used to compute direction change
@@ -122,7 +158,6 @@ var activePagers = [];
 	}
 
 	var renderPagersMobile =  function(swiper, current, total) {
-		console.log("paginationCustomRender mobile, i: " + current);
 
 		if (prevSlideIndex != current ) { // prevent firing twice on first and final slides (not sure why this happens but it is built in to idangerous slider)
 
@@ -152,10 +187,28 @@ var activePagers = [];
 		}
 	}
 
-	var prevWindowSize = window.innerWidth;
-	var resetValuesForWindowResize = function() {
+	var resetValuesMobile = function() {
 		$('.spinner-pagination').find('.pager').removeAttr('style');
+		$('.spinner-background').height(pagers[0].outerHeight());
 	}
+	
+	var resetValuesTablet = function() {
+		
+		console.clear();
+		
+		swiperObject.destroy();
+		$('.swiper-wrapper').removeAttr('style');
+		
+		pagers = [];
+		$('.spinner-pagination .pager').each(function(){
+			pagers.push($(this));
+		});
+
+		initSpinner();
+		swiperObject.update();
+		prevSlideIndex = null;
+	}
+	
 	var swiperObject = null;
 	
 	var config = {
@@ -166,9 +219,9 @@ var activePagers = [];
 		paginationType: 'custom',
 		speed: 500, // match $transition-speed in CSS
 		loop: true,
-		//effect: 'fade',
 		prevButton: '.swiper-page-prev',
 		nextButton: '.swiper-page-next',
+		simulateTouch: false,
 		breakpoints: {
 			768: { // mobile config
 				paginationCustomRender: renderPagersMobile
@@ -180,55 +233,48 @@ var activePagers = [];
 	}
 	
 	var prevSlideIndex = 0;
+	var prevWindowSize = window.innerWidth;
 	
-	var initSpinner = debounce(function(){
+	//var initSpinner = debounce(function(){
+	var initSpinner = function() {	
 		
-		// ensure component height is correct
-		 $('.animated-spinner-hero').height($(window).outerHeight());
-		
-		var mobile = (window.innerWidth < 767);
-		var tabletOrAbove = (window.innerWidth > 767);
+		$('.animated-spinner-hero').height($(window).outerHeight());
 
-		if (prevWindowSize < 767 && tabletOrAbove) { // if was mobile but is now tablet
-			resetValuesForWindowResize();
-			prevWindowSize = window.innerWidth;
-		}
-		else if (prevWindowSize > 767 && mobile) {
-			resetValuesForWindowResize();
-			prevWindowSize = window.innerWidth;
-		}
-		
 		var swiper = new Swiper('.swiper-container', config);
 		swiperObject = swiper; // wannabe return statement to allow debounce
 		return swiper;
-	//}
-	}, 200);
+	}
+	//}, 200);
+	
 	
 	$('.spinner-pagination .pager').each(function(){
 		pagers.push($(this));
 	});
-	
 	initSpinner();
-	$( window ).resize(function() {
-		initSpinner();
+	
+	var mobile;
+	var tabletOrAbove;
+	$(window).resize(function() {
+		
+		mobile = (window.innerWidth < 767);
+		tabletOrAbove = (window.innerWidth > 767);
+		
+		if (prevWindowSize > 767 && mobile) {
+			resetValuesMobile();
+		}
+		else if (prevWindowSize < 767 && tabletOrAbove) { // if was mobile but is now tablet
+			resetValuesTablet();
+		}
+		prevWindowSize = window.innerWidth; // set new value
 	});
 	
 	// Add button interactions
 	$('.spinner-pagination').on('click', '.prev', function(){
 		swiperObject.slidePrev();
 	});
-	$('.spinner-pagination').on('click', '.next', function(){
+	$('.spinner-pagination').on('click', '.next, .item-1, .item-2, .item-3', function(){
 		swiperObject.slideNext();
 	});
-	
-	// dev test buttons
-	$('#test-prev').click(function(){
-		swiperObject.slidePrev();
-	});
-	$('#test-next').click(function(){
-		swiperObject.slideNext();
-	});
-	
 	
 })();
 
@@ -302,36 +348,7 @@ var activePagers = [];
 
 
 
-var calculateSlideDirection = function(prevIndex, currentIndex, total) {
-	var direction;
-	//first slide
-	if (currentIndex == 1) {
-		if (prevIndex == total) { // final slide was previous
-			direction = "next"
-		}
-		else if (prevIndex > currentIndex) {
-			direction = "prev";
-		}
-	}
-	// final slide
-	else if (currentIndex == total) {
-		if (prevIndex == 1) { // first slide was previous
-			direction = "prev";
-		}
-		else if (prevIndex < currentIndex) {
-			direction = "next";
-		}
-	}
-	// middle slides
-	else { 
-		if (prevIndex < currentIndex) {
-			direction = "next";
-		}
-		else direction = "prev";
-	}
-	if (prevIndex == currentIndex) return false;
-	return direction;
-}
+
 
 var copyAndShiftPagerPrev = function(currentPager, pagerFadeOut, numberOfPagersShowing, total, activeMargin) {
 	

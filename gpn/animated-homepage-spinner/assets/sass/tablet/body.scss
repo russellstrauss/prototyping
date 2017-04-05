@@ -34,6 +34,10 @@
 				background: none;
 				bottom: auto;
 				
+				&.item-1, &.item-2, &.item-3 {
+					cursor: pointer;
+				}
+				
 				&.active {
 					top: 25px; // match value activeMargin in JS to avoid transition on page load
 					bottom: auto;

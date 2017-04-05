@@ -152,6 +152,8 @@
     padding: 0 50px 0 75px;
     background: none;
     bottom: auto; }
+  .animated-spinner-hero .spinner-container .spinner-pagination .pager.item-1, .animated-spinner-hero .spinner-container .spinner-pagination .pager.item-2, .animated-spinner-hero .spinner-container .spinner-pagination .pager.item-3 {
+    cursor: pointer; }
   .animated-spinner-hero .spinner-container .spinner-pagination .pager.active {
     top: 25px;
     bottom: auto; }

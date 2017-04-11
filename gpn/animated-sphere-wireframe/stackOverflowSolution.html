@@ -1,110 +1,109 @@
-<script src="http://threejs.org/build/three.js"></script>
-<script src="http://threejs.org/examples/js/controls/TrackballControls.js"></script>
-<script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
-
-<style>
-	html *{
-		padding: 0;
-		margin: 0;
-		width: 100%;
-		overflow: hidden;
-	}
-
-	#host {
-		width: 100%;
-		height: 100%;
-	}
-</style>
-
-<div id="host"></div>
-
-<script>
-	// INITIALIZE
-	var WIDTH = window.innerWidth,
-		HEIGHT = window.innerHeight,
-		FOV = 35,
-		NEAR = 1,
-		FAR = 1000;
-	var wireframeColor = 0xb8c0c8;
-
-	var renderer = new THREE.WebGLRenderer({ antialias: true });
-	renderer.setClearColor(0xf0f0f0);
-	renderer.setSize(WIDTH, HEIGHT);
-	document.getElementById('host').appendChild(renderer.domElement);
-
-	var stats = new Stats();
-	stats.domElement.style.position = 'absolute';
-	stats.domElement.style.top = '0';
-	document.body.appendChild(stats.domElement);
-
-	var camera = new THREE.PerspectiveCamera(FOV, WIDTH / HEIGHT, NEAR, FAR);
-	camera.position.z = 50;
-
-	// var trackballControl = new THREE.TrackballControls(camera, renderer.domElement);
-	// trackballControl.rotateSpeed = 5.0; // need to speed it up a little
-
-	var scene = new THREE.Scene();
-
-
-	
-	
-	
-	
-	// You already had this part
-	var geometry = new THREE.IcosahedronGeometry(10, 1);
-	var material = new THREE.MeshBasicMaterial({
-		color: wireframeColor,
-		wireframe: true
-	});
-
-	var isoMesh = new THREE.Mesh(geometry, material);
-	scene.add(isoMesh);
-	
-	var nodeMaterial = new THREE.MeshBasicMaterial({
-		color: wireframeColor
-	});
-	
-	// Add your circles directly to the scene
-	var nodeGeometry = new THREE.CircleGeometry(.25, 32);
-	
-	var nodes = [];
-	for (var i = 0; i < geometry.vertices.length; ++i) {
-		nodes.push(new THREE.Mesh(nodeGeometry, nodeMaterial));
-		scene.add(nodes[nodes.length - 1]);
-	}
-
-	// This is called in render. Get the world positions of the vertices and apply them to the circles.
-	var tempVector = new THREE.Vector3();
-	function updateVertices(){
-		if (typeof isoMesh !== "undefined" && typeof nodes !== "undefined" && nodes.length === isoMesh.geometry.vertices.length) {
-			
-			isoMesh.rotation.x += 0.005;
-			isoMesh.rotation.y += 0.002;
-			for (var i = 0; i < nodes.length; ++i) {
-				tempVector.copy(isoMesh.geometry.vertices[i]);
-				nodes[i].position.copy(isoMesh.localToWorld(tempVector));
-				nodes[i].lookAt(camera.position);
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js canvas - interactive particles</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
 			}
-		}
-	}
-
+		</style>
+	</head>
+	<body>
+		<div id="host"></div>
 	
-	
-	
+		<script src="assets/js/three.min.js"></script>
+		<script src="js/libs/stats.min.js"></script>
+		
+		<script>
+			// INITIALIZE
+			var WIDTH = window.innerWidth,
+				HEIGHT = window.innerHeight,
+				FOV = 35,
+				NEAR = 1,
+				FAR = 1000;
+			var wireframeColor = 0xb8c0c8;
 
-	function render(){
-		if (typeof updateVertices !== "undefined") {
-			updateVertices();
-		}
-		renderer.render(scene, camera);
-		stats.update();
-	}
+			var renderer = new THREE.WebGLRenderer({ antialias: true });
+			renderer.setClearColor(0xf0f0f0);
+			renderer.setSize(WIDTH, HEIGHT);
+			document.getElementById('host').appendChild(renderer.domElement);
 
-	function animate() {
-		requestAnimationFrame(animate);
-		//trackballControl.update();
-		render();
-	}
+			var stats = new Stats();
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.top = '0';
+			document.body.appendChild(stats.domElement);
 
-	animate();
-</script>
+			var camera = new THREE.PerspectiveCamera(FOV, WIDTH / HEIGHT, NEAR, FAR);
+			camera.position.z = 50;
+
+			var scene = new THREE.Scene();
+
+
+			
+			
+			
+			
+			// You already had this part
+			var geometry = new THREE.IcosahedronGeometry(10, 1);
+			var material = new THREE.MeshBasicMaterial({
+				color: wireframeColor,
+				wireframe: true
+			});
+
+			var isoMesh = new THREE.Mesh(geometry, material);
+			scene.add(isoMesh);
+			
+			var nodeMaterial = new THREE.MeshBasicMaterial({
+				color: wireframeColor
+			});
+			
+			// Add your circles directly to the scene
+			var nodeGeometry = new THREE.CircleGeometry(.25, 32);
+			
+			var nodes = [];
+			for (var i = 0; i < geometry.vertices.length; ++i) {
+				nodes.push(new THREE.Mesh(nodeGeometry, nodeMaterial));
+				scene.add(nodes[nodes.length - 1]);
+			}
+
+			var tempVector = new THREE.Vector3();
+			function updateVertices(){
+				if (typeof isoMesh !== "undefined" && typeof nodes !== "undefined" && nodes.length === isoMesh.geometry.vertices.length) {
+					
+					isoMesh.rotation.x += 0.005;
+					isoMesh.rotation.y += 0.002;
+					for (var i = 0; i < nodes.length; ++i) {
+						tempVector.copy(isoMesh.geometry.vertices[i]);
+						nodes[i].position.copy(isoMesh.localToWorld(tempVector));
+						nodes[i].lookAt(camera.position);
+					}
+				}
+			}
+
+			
+			
+			
+
+			function render(){
+				if (typeof updateVertices !== "undefined") {
+					updateVertices();
+				}
+				renderer.render(scene, camera);
+				stats.update();
+			}
+
+			function animate() {
+				requestAnimationFrame(animate);
+				render();
+			}
+
+			animate();
+		</script>
+	</body>
+</html>
+

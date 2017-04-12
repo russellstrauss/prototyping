@@ -46,6 +46,9 @@
 				
 				return Rn;
 			};
+			function getRandom(min, max) {
+				return (Math.random() * (max - min) + min);
+			}
 			
 			var tempVector = new THREE.Vector3();
 			var setUpNodes = function(i) {
@@ -72,7 +75,6 @@
 				// BUG: this not running correctly because of spehere position, opacity for backside nodes not set on initialize
 				if (nodeBehindSphere(nodes[i], isoMesh, nodeVisibilityMargin)) { // hide initially if positioned on backside of sphere
 					nodes[i].material.opacity = opacityFloor;
-					//nodes[i].material.color.setHex(0xffff00);
 				}
 				
 				// Initialize fade flag variables
@@ -132,9 +134,10 @@
 			var fadeSpeed = 0.04;
 			var wireframeColor = 0xb8c0c8;
 			var bgColor = 0xf0f0f0;
-			var nodeVisibilityMargin = 0;//50;
+			var nodeVisibilityMargin = 10;//50;
 			var count = 0;
 			var backgroundNodeScale = .6;
+			var randomMovement = 0.001;
 			
 			init();
 			animate();
@@ -151,8 +154,8 @@
 				FAR = 1000;
 				
 				camera = new THREE.PerspectiveCamera(FOV, WIDTH / HEIGHT, NEAR, FAR);
-				//camera.position.set(0, 0, 500);
 				camera.position.z = 500;
+				//camera.position.set(130, -100, 500);
 
 				scene = new THREE.Scene();
 				
@@ -183,15 +186,17 @@
 					setUpNodes(i);
 				}
 				
-				var planeGeometry = new THREE.PlaneGeometry(1000, 1000, 1, 1);
+				var planeGeometry = new THREE.PlaneBufferGeometry(1000, 1000, 1, 1);
 				var planeMaterial = new THREE.MeshBasicMaterial({
 					color: bgColor, 
+					//color: 0xffff00,
 					side: THREE.DoubleSide,
 					transparent: true,
-					opacity: 0.3
+					opacity: 0.5
 				});
 				var plane = new THREE.Mesh(planeGeometry, planeMaterial);
 				scene.add(plane);
+				plane.translateZ( -1 * nodeVisibilityMargin );
 
 				renderer = new THREE.WebGLRenderer({ antialias: true });
 				renderer.setClearColor(bgColor);
@@ -226,13 +231,16 @@
 				mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 			}
 			
-			
 			function updateVertices(){
 				if (typeof isoMesh !== "undefined" && typeof nodes !== "undefined" && nodes.length === isoMesh.geometry.vertices.length) {
 					
-					isoMesh.rotation.x += 0.005;
-					isoMesh.rotation.y += 0.002;
-					isoMesh.rotation.z -= 0.001;
+					if (count % 1000 == 0) {
+						randomMovement = getRandom(-0.003, 0.003);
+					}
+					
+					isoMesh.rotation.x += 0.002;
+					isoMesh.rotation.y -= 0.003;
+					isoMesh.rotation.z += randomMovement;
 					
 					if (isoMesh.rotation.x >= 360) isoMesh.rotation.x = 0;
 					if (isoMesh.rotation.y >= 360) isoMesh.rotation.y = 0;
@@ -240,7 +248,9 @@
 					for (var i = 0; i < nodes.length; ++i) {
 						tempVector.copy(isoMesh.geometry.vertices[i]);
 						nodes[i].position.copy(isoMesh.localToWorld(tempVector));
-						nodes[i].lookAt(camera.position);
+						//nodes[i].lookAt(camera.position);
+						
+						nodes[i].quaternion.copy( camera.quaternion ); // make nodes normal to camera viewing direction
 						
 						fadeBackgroundNodes(i);
 						interpolateScaleNodes(i);
@@ -274,8 +284,8 @@
 				}
 				
 				controls.update();
-				
-				camera.lookAt(scene.position);
+								
+				//camera.lookAt(scene.position);
 				camera.updateMatrixWorld();
 				renderer.render(scene, camera);
 			}

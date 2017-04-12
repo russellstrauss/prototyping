@@ -16,6 +16,7 @@
 	<body>
 
 		<script src="assets/js/three.min.js"></script>
+		<script src="http://threejs.org/examples/js/controls/TrackballControls.js"></script>
 		<script src="js/libs/stats.min.js"></script>
 
 		<script>
@@ -118,11 +119,11 @@
 				var distanceScale = interpolateNodeDistance(nodes[i], isoMesh.userData.closestNode, isoMesh.userData.farthestNode);
 				nodes[i].scale.set(distanceScale, distanceScale, distanceScale);
 			};
-		
+			
 			var requestAnimationFrameID;
 			var container, stats;
 			var camera, scene, renderer;
-			var raycaster, mouse, intersects;
+			var raycaster, mouse, intersects, controls;
 			var isoMesh;
 			var nodes = [];
 			var nodeRadius = 6;
@@ -130,7 +131,8 @@
 			var opacityFloor = 0.3;
 			var fadeSpeed = 0.04;
 			var wireframeColor = 0xb8c0c8;
-			var nodeVisibilityMargin = 50;
+			var bgColor = 0xf0f0f0;
+			var nodeVisibilityMargin = 0;//50;
 			var count = 0;
 			var backgroundNodeScale = .6;
 			
@@ -149,9 +151,13 @@
 				FAR = 1000;
 				
 				camera = new THREE.PerspectiveCamera(FOV, WIDTH / HEIGHT, NEAR, FAR);
-				camera.position.set(400, 0, -300);
+				//camera.position.set(0, 0, 500);
+				camera.position.z = 500;
 
 				scene = new THREE.Scene();
+				
+				// var axisHelper = new THREE.AxisHelper(1000);
+				// scene.add(axisHelper);
 
 				isoGeometry = new THREE.IcosahedronGeometry(isoRadius, 1);
 				var material = new THREE.MeshBasicMaterial({
@@ -177,12 +183,21 @@
 					setUpNodes(i);
 				}
 				
+				var planeGeometry = new THREE.PlaneGeometry(1000, 1000, 1, 1);
+				var planeMaterial = new THREE.MeshBasicMaterial({
+					color: bgColor, 
+					side: THREE.DoubleSide,
+					transparent: true,
+					opacity: 0.3
+				});
+				var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+				scene.add(plane);
 
-
-				renderer = renderer = new THREE.WebGLRenderer({ antialias: true });
-				renderer.setClearColor(0xf0f0f0);
+				renderer = new THREE.WebGLRenderer({ antialias: true });
+				renderer.setClearColor(bgColor);
 				renderer.setSize(window.innerWidth, window.innerHeight);
 				container.appendChild(renderer.domElement);
+				initControls();
 				
 				//raycaster = new THREE.Raycaster();
 				//mouse = new THREE.Vector2(9999,9999);
@@ -200,7 +215,10 @@
 				camera.updateProjectionMatrix();
 				renderer.setSize(window.innerWidth, window.innerHeight);
 			}
-			
+			function initControls() {
+				controls = new THREE.TrackballControls(camera, renderer.domElement);
+				controls.rotateSpeed = 5.0; // need to speed it up a little
+			}
 			function onDocumentMouseMove(event) 
 			{
 				event.preventDefault();
@@ -214,8 +232,10 @@
 					
 					isoMesh.rotation.x += 0.005;
 					isoMesh.rotation.y += 0.002;
-					if (isoMesh.rotation.x > 360) isoMesh.rotation.x = 0;
-					if (isoMesh.rotation.y > 360) isoMesh.rotation.y = 0;
+					isoMesh.rotation.z -= 0.001;
+					
+					if (isoMesh.rotation.x >= 360) isoMesh.rotation.x = 0;
+					if (isoMesh.rotation.y >= 360) isoMesh.rotation.y = 0;
 					
 					for (var i = 0; i < nodes.length; ++i) {
 						tempVector.copy(isoMesh.geometry.vertices[i]);
@@ -252,6 +272,8 @@
 				if (typeof updateVertices !== "undefined") {
 					updateVertices();
 				}
+				
+				controls.update();
 				
 				camera.lookAt(scene.position);
 				camera.updateMatrixWorld();

@@ -1,0 +1,53 @@
+["If I seem nutty to you, and if I seem like an oddball to you, just remember one thing: the mighty oak tree was once a nut like me. - Glenn Turner", ""]
+
+
+[
+	{
+		quote: "If I seem nutty to you, and if I seem like an oddball to you, just remember one thing: the mighty oak tree was once a nut like me.",
+		author: "Glenn Turner"
+	},
+	{
+		quote: "If you had heard only a quarter of what I have heard about him, and I have only heard a very little of all there is to hear, you would be prepared for any sort of remarkable tale. Tales and adventures sprouted up all over the place wherever he went, in the most extraordinary fashion.",
+		author: "J.R.R. Tolkien"
+	},
+	{
+		quote: "Stay focused; be who you are; trust in a wise friend; live off the land; glide through dark times; be observant; treasure the quiet times.",
+		author: "Advice from an owl"
+	},
+	{
+		quote: "",
+		author: ""
+	},
+	{
+		quote: "",
+		author: ""
+	},
+	{
+		quote: "",
+		author: ""
+	},
+	{
+		quote: "",
+		author: ""
+	},
+	{
+		quote: "",
+		author: ""
+	},
+	{
+		quote: "",
+		author: ""
+	},
+	{
+		quote: "",
+		author: ""
+	},
+	{
+		quote: "",
+		author: ""
+	},
+	{
+		quote: "",
+		author: ""
+	}
+]
